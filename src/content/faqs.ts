@@ -29,4 +29,13 @@ export const FAQS: Partial<Record<RouteKey, FaqItem[]>> = {
     { q: "How do buyers view it?", a: "In a VR headset at your sales office, launch event, exhibition or customer meeting." },
     { q: "Can we show interiors and finishes?", a: "Yes. Interior designs and proposed finishes can be presented visually in the virtual model." },
   ],
+  "vr-hub": [
+    { q: "Which headsets does VR HUB work with?", a: "Meta Quest and PICO. Each headset is registered with its manufacturer and model, and reports its own battery levels, storage and network status to the console." },
+    { q: "What kind of video can I upload?", a: "Mono, stereo side-by-side and stereo over-under VR video, with a thumbnail. Large files upload in 10 MB parts, five at a time, and you can follow progress or cancel." },
+    { q: "Can I control only some of the headsets in a group?", a: "Yes. Choose exactly which headsets receive each Play, Pause or Reset command." },
+    { q: "How do in-headset questions work?", a: "Build questions once and place them at exact timestamps on a video's timeline. When a headset reaches a cue, the question appears in VR and the answer is recorded against that headset and interaction." },
+    { q: "Can sessions run on a schedule?", a: "Yes. Run a group sync or start playback automatically, once, daily or weekly." },
+    { q: "What are credits?", a: "Restricted users play content with credits: one credit per completed view. Credits are added by an admin with an expiry date." },
+    { q: "How do I get an account?", a: "Accounts are created by your VR HUB administrator. Request access and we'll get you set up." },
+  ],
 };

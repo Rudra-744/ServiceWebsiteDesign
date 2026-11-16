@@ -8,7 +8,7 @@ import type { FaqItem } from "@/content/faqs";
 
 // FAQ (ANIMATION-SPEC R9): rules draw in on reveal; the answer opens with grid-template-rows 0fr → 1fr.
 // With `ask`, the heading sits in a sticky side column with a contact link (rental/events layout).
-export function Faq({ items, ask }: { items: FaqItem[]; ask?: { lead: string; label: string; service: string } }) {
+export function Faq({ items, ask, title = "Questions." }: { items: FaqItem[]; ask?: { lead: string; label: string; service: string }; title?: string }) {
   const list = (
     <ul className="m-0 list-none p-0">
       {items.map((it) => (
@@ -21,7 +21,7 @@ export function Faq({ items, ask }: { items: FaqItem[]; ask?: { lead: string; la
       {ask ? (
         <div className="grid gap-[clamp(30px,4vw,48px)] min-[1000px]:grid-cols-[.8fr_1.2fr] min-[1000px]:gap-[6vw]">
           <div className="min-[1000px]:sticky min-[1000px]:top-[calc(var(--nav-h)+60px)] min-[1000px]:self-start">
-            <SplitText as="h2" className="d2" text="Questions." />
+            <SplitText as="h2" className="d2" text={title} />
             <p className="body-copy fade mt-[22px]" data-reveal="">
               {ask.lead}{" "}
               <Link href={contactHref(ask.service)} className="text-blue-deep underline underline-offset-3">
@@ -35,7 +35,7 @@ export function Faq({ items, ask }: { items: FaqItem[]; ask?: { lead: string; la
       ) : (
         <>
           <div className={HEAD}>
-            <SplitText as="h2" className="d2" text="Questions." />
+            <SplitText as="h2" className="d2" text={title} />
           </div>
           {list}
         </>

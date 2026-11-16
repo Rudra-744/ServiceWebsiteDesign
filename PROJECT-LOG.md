@@ -251,3 +251,31 @@ Written directly in Tailwind (see the conventions in the Tailwind conversion ent
   - Pixel diff against the reference: 360° ≤ 2.3% and Real estate ≤ 2.3% on every shot.
   - The Walkthrough shots differ by design: the reference draws the WebGL room, which comes in stage 5.
   - Zero console errors.
+
+### VR HUB (HB1–HB7) — `app/(services)/vr-hub`, `sections/hub/*`
+
+- **HB1** `HubHero.tsx`: the network SVG is built once at module scope (deterministic) and animated on the shared ticker only while visible (draw → dot → node "Playing" → fade, 6 s per link, offset `i × 0.025`). Off with reduced motion.
+- **HB2** `Strike.tsx`: three strike lines grow `E.out(k)` and grey out when complete. The answer headline rises with split text.
+- **HB3** `Platform.tsx`:
+  - Pinned 440vh from 1000 px; panels cross-fade; the pill nav marks the active panel.
+  - Below 820 px, each panel turns on at 15% into view. The 820 px threshold is the reference JS breakpoint, kept as is.
+  - Entering a panel runs its count-ups. Panel 2 runs the upload simulation: 20 segments, ≤ 5 at once, 170 ms ticks, repeats after 1.8 s. The media-type toggle animates the grid.
+- **HB4** `LiveControl.tsx`:
+  - React state for selection, media, restricted mode, per-headset state and a 5-line log.
+  - Play/Pause/Reset are staggered 70/50/50 ms. A per-headset key restarts the 12 s progress bar.
+  - Restricted mode with 5 credits blocks Play for more than 5 headsets. The payload JSON follows the selection.
+- **HB5** `Interactions.tsx`: playhead, fill and time (0–12:40); the cues light up; the question card swaps 140 ms after each cue. Question-type tiles pop in.
+- **HB6** `HowItWorks.tsx`: the line fills `scaleY(p)`; step `i` turns on at `i / 6 × .96 + .01`.
+- **HB7** `Admins.tsx`:
+  - Role cards: the outer two slide out from behind the middle one on desktop.
+  - Alert thresholds with count-ups (`data-count`, run by the reveal). The notification card drops in and its bell rings.
+  - Reliability tiles.
+- FAQ ("Questions, answered.", `Faq` got a `title` prop) and the centred closing CTA. There is no "Next" link (last page), as in the reference.
+- **Tested:**
+  - Pixel diff against the reference: desktop ≤ 2.1%, phone ≤ 4%. The phone difference is a 1 px vertical offset; the last shot also differs in the footer curtain's scroll position.
+  - Interactions:
+    - Play → 8 Playing; Pause → 8 Paused.
+    - Restricted + Play → "Play blocked — 5 credits don't cover 8 headsets."
+    - Clear and pick 2 → payload targets "Quest 01,PICO 03". Reset only resets those 2.
+    - Timeline at 7:54 shows question 2.
+  - Zero console errors.
