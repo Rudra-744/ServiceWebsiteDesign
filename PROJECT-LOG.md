@@ -218,3 +218,26 @@ Written directly in Tailwind (see the conventions in the Tailwind conversion ent
   - Pixel diff against the reference rental page: desktop ≤ 2.1% on every shot. Phone: under 3% after the crumb margin fix.
   - Interactions: slider 120 plus "A month or more" → 120 cells on, "Long-term bulk rental | 12 | 5 | 720", CTA note correct. FAQ opens. Rail arrow scrolls one card.
   - Zero console errors.
+
+### VR events (E1–E5) — `app/(services)/vr-events`, `sections/events/*`
+
+- **E1** hero:
+  - Same stage wipe as R1.
+  - The rolling "Perfect for ___" word swaps every 2.6 s (`ehOut`/`ehIn`).
+  - A ten-card deck shuffles while visible (top card flies out, re-stacks after 520 ms), spreads with scroll and leans with the pointer. Positions are the reference `POS` table.
+- **E2** explorer:
+  - React state for set/occasion.
+  - The panel children fade down (0.22 s) and come back staggered 45 ms after 230 ms.
+  - The sliding set pill is measured in a layout effect and on resize.
+  - Desktop auto-play: the active row's line runs `eoBar` 5 s while the list is 25% into view, and `animationend` opens the next occasion. The first click stops it.
+- **E3** story on `Story` (blue panel, `kDiv` 0.8): crowd → fitting ring timer → stereo 360° lenses → post likes and replies.
+- **E4** brand preview: shared floating-label field (`components/ui/field.ts`, reused by Contact), event-type chips, both lenses update, `ebBump` on each name change, pointer tilt.
+- **E5** includes tiles (`.pop`), FAQ with the side column, band with the Quest.
+- `content/events.ts` holds the occasions, ideas and rolling words.
+- **Tested:**
+  - Pixel diff against the reference events page: ≤ 2.6% on every shot (the deck is mid-shuffle in the hero shots).
+  - Interactions:
+    - Auto-advance moved to the next occasion after 5 s.
+    - "Celebrations" → Birthday parties. Picking Weddings shows its three ideas and stops auto-play.
+    - Typing "Acme Expo" shows it on both lenses. Wedding + empty input → "Riya & Arjun".
+  - Zero console errors.
