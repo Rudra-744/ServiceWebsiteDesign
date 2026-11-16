@@ -79,11 +79,11 @@ export function releaseReveals(gap = 70) {
     });
 }
 
-/** (re)arm every reveal element inside `root` (called when a page mounts) */
+/** arm every reveal element inside `root` (called when a page mounts). Pages re-mount on navigation, so nothing
+ *  carries `.in` over; manual elements (hero intro) may already have been revealed by their own effect. */
 export function armReveals(root: ParentNode) {
   const o = observer();
-  root.querySelectorAll("[data-split],[data-reveal],[data-manual]").forEach((el) => {
-    el.classList.remove("in");
-    if (!el.hasAttribute("data-manual")) o.observe(el);
+  root.querySelectorAll("[data-split],[data-reveal]").forEach((el) => {
+    if (!el.hasAttribute("data-manual") && !el.classList.contains("in")) o.observe(el);
   });
 }

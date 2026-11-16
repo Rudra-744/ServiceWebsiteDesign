@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "./chrome.css";
 @import "./pages.css";
+@import "./home.css";
+@import "./tour.css";
 
 /* =========================================================
    CYPHON design tokens (PROJECT-BRIEF 4.1). Flat colour only: no gradients, glows or glass.

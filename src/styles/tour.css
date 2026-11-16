@@ -1,0 +1,58 @@
+/* =========================================================
+   H9 / RE2 3D walkthrough HUD (site.css "3D WALKTHROUGH" + THEME, folded). The WebGL view lands in stage 5.
+   ========================================================= */
+.tour { position: relative; height: 520vh; }
+.tour-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: #c9daff; isolation: isolate; }
+.tour-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; cursor: grab; }
+.tour-cv.drag { cursor: grabbing; }
+.tour-intro { position: absolute; left: var(--pad); top: calc(var(--nav-h) + 40px); max-width: 460px; background: #fff; color: var(--ink); border-radius: var(--r-l); padding: 24px 26px 26px; box-shadow: 0 0 0 1px var(--line); will-change: opacity, transform; }
+.tour-intro .d3 { margin: 6px 0 10px; }
+.tour-intro p { margin: 0; color: var(--stone); font-size: 16px; }
+.tour-room { position: absolute; left: var(--pad); bottom: calc(28px + env(safe-area-inset-bottom, 0px)); width: min(380px, calc(100% - 2 * var(--pad) - 170px)); background: #fff; color: var(--ink); border-radius: var(--r-l); padding: 18px 20px 20px; box-shadow: 0 0 0 1px var(--line); }
+.tour-room small { display: block; font-size: 13px; color: var(--muted2); font-weight: 540; }
+.tour-room b { display: block; font-size: clamp(22px, 2.2vw, 32px); font-weight: 640; font-stretch: 112%; letter-spacing: -0.025em; line-height: 1.05; margin: 4px 0 6px; }
+.tour-room span { display: block; font-size: 15px; color: var(--muted2); line-height: 1.4; }
+.tour-room .txt { transition: opacity 0.3s, transform 0.5s var(--e-out); }
+.tour-room .txt.swap { opacity: 0; transform: translateY(8px); }
+.tour-ticks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 14px; }
+.tour-ticks i { height: 3px; border-radius: 2px; background: #e6e6ea; position: relative; overflow: hidden; }
+.tour-ticks i b { position: absolute; inset: 0; margin: 0; background: var(--blue); transform-origin: left; transform: scaleX(0); }
+.tour-map { position: absolute; right: var(--pad); top: calc(var(--nav-h) + 40px); width: clamp(120px, 14vw, 190px); background: #fff; border-radius: 18px; padding: 10px; box-shadow: 0 0 0 1px var(--line); }
+.tour-map svg { width: 100%; height: auto; }
+.tour-map small { display: block; font-size: 11.5px; color: var(--muted2); margin: 2px 2px 6px; font-weight: 540; }
+.tour-pad { position: absolute; right: var(--pad); bottom: calc(28px + env(safe-area-inset-bottom, 0px)); display: grid; grid-template-columns: repeat(3, 54px); grid-template-rows: repeat(3, 54px); gap: 6px; }
+.tour-pad button { border-radius: 16px; background: #fff; color: var(--ink); box-shadow: 0 0 0 1px var(--line); display: grid; place-items: center; transition: background-color 0.3s, color 0.3s, transform 0.35s var(--e-spring); }
+.tour-pad button svg { width: 22px; height: 22px; }
+.tour-pad button:hover { background: var(--blue); color: var(--ink); box-shadow: none; }
+.tour-pad button:active { transform: scale(0.9); }
+.tour-pad button:disabled { opacity: 0.4; pointer-events: none; }
+.tour-pad .up { grid-column: 2; grid-row: 1; }
+.tour-pad .lt { grid-column: 1; grid-row: 2; }
+.tour-pad .ct { grid-column: 2; grid-row: 2; border-radius: 50%; background: var(--ink); color: #fff; box-shadow: none; }
+.tour-pad .rt { grid-column: 3; grid-row: 2; }
+.tour-pad .dn { grid-column: 2; grid-row: 3; }
+.tour-hint { position: absolute; left: 50%; top: calc(var(--nav-h) + 40px); transform: translateX(-50%); margin: 0; padding: 8px 14px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 13.5px; white-space: nowrap; transition: opacity 0.5s; }
+.tour-hot { position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px 0 10px; border-radius: 999px; background: #fff; color: var(--ink); box-shadow: 0 0 0 1px var(--line); font-size: 14px; font-weight: 560; white-space: nowrap; transform: translate(-50%, -50%); opacity: 0; pointer-events: none; transition: opacity 0.35s, background-color 0.3s; will-change: transform; }
+.tour-hot i { width: 18px; height: 18px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 3px #fff; position: relative; }
+.tour-hot i::after { content: ""; position: absolute; inset: -7px; border-radius: 50%; border: 2px solid var(--blue); opacity: 0.6; animation: hotPulse 1.8s ease-out infinite; }
+.tour-hot.show { opacity: 1; pointer-events: auto; }
+.tour-hot:hover { background: var(--blue); }
+.tour-note { position: absolute; right: var(--pad); bottom: calc(28px + 3 * 54px + 2 * 6px + 12px); font-size: 12px; color: var(--ink); opacity: 0.7; margin: 0; }
+.tour.nogl .tour-cv { display: none; }
+@media (max-width: 819px) {
+  .tour { height: 500vh; }
+  .tour-intro { right: calc(var(--pad) + 122px); max-width: none; padding: 16px 16px 18px; top: calc(var(--nav-h) + 28px); }
+  .tour-intro .d3 { font-size: 26px; }
+  .tour-intro p { font-size: 14.5px; }
+  .tour-map { top: calc(var(--nav-h) + 28px); width: 112px; padding: 8px; border-radius: 14px; }
+  .tour-map small { display: none; }
+  .tour-room { left: 12px; right: 12px; width: auto; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); padding: 14px 16px 16px; padding-right: calc(3 * 44px + 2 * 5px + 28px); }
+  .tour-room b { font-size: 21px; }
+  .tour-room span { font-size: 13.5px; }
+  .tour-pad { right: 20px; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); grid-template-columns: repeat(3, 44px); grid-template-rows: repeat(3, 44px); gap: 5px; }
+  .tour-pad button { border-radius: 13px; }
+  .tour-pad button svg { width: 19px; height: 19px; }
+  .tour-hint { left: 12px; transform: none; top: auto; bottom: calc(12px + 190px); }
+  .tour-hot { height: 34px; font-size: 13px; }
+  .tour-note { display: none; }
+}

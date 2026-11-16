@@ -39,7 +39,6 @@ export function Providers({ children }: { children: ReactNode }) {
     const main = document.getElementById("main");
     if (main) armReveals(main);
     measureAll();
-    ScrollTrigger.refresh();
   }, [pathname]);
 
   return <TransitionProvider>{children}</TransitionProvider>;

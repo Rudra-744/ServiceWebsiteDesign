@@ -103,3 +103,38 @@ Exact values come from `ANIMATION-SPEC.md` and the reference code; when they dis
 | # | Issue | Found | Status |
 |---|---|---|---|
 | 1 | Back navigation while scrolled to the bottom showed a white footer area for ~0.6 s (the freeze cloned only `<main>`). | Stage 2 | Fixed 2026-11-16 (footer cloned into the freeze). Re-check in the final audit. |
+
+---
+
+## Stage 3 — 2026-11-16: Home (H1–H13)
+
+**What** (all values from ANIMATION-SPEC §2 and the reference code; files under `src/sections/home`, shared ones under `src/sections/shared`)
+
+- **H1/H1b Hero** (`Hero.tsx`): occasion tabs (7.5 s cycle, progress line, arrow keys), fit-to-width font (`--hl-fs`), band clip geometry, wipe/retract timing, mouse/tap slide, "With Cyphon" tag, connector to the visor, occasion switch (letters out 0.34 s, new pair `.quick` rise, lede swap, CTA label/href, link, screen-reader sentence). CTA links now carry the note: `/contact?service=…&note=We'd like VR for …`. Pin timeline (380vh/340vh): lens clip from the visor to the screen, visor dissolve mask `--f`, headline+band fade as one layer, side text/tabs/hint exits, five captions. Shared `heroState` (progress, visor box) for the stage-5 WebGL layers.
+- **H2 Manifesto** (`components/motion/ScrubWords.tsx`, shared with Events/360°).
+- **H3 Orbit** (`Orbit.tsx`): ellipse, fake depth, burst-out entry, dwell-and-glide, beam redraw, card swap, tap-to-front.
+- **H4 Fleet** (`shared/Fleet.tsx`, Canvas 2D, `variant="pin" | "view"` for Rental): zoom, pop-in with bubble rings, slots, ripple, VR HUB console card, counters.
+- **H5 Marquee**, **H6 Services** (horizontal pin + phone stack via `hooks/useStackScene.ts`), **H7 Occasions**, **H8 Floor plan** (`shared/FloorPlan.tsx`, reused on Real estate), **H11 VR HUB teaser** (`HubTeaser.tsx`, shared clock, play signal, answers, Play/Pause), **H12 Why**, **H13 Final CTA** (`FinalCta.tsx`, Canvas 2D tunnel, portal clip, captions).
+- **H9 Walkthrough** (`shared/Tour.tsx`): HUD, camera path/timeline (`lib/tourPath.ts`), room card swaps, ticks, mini-map, look-around drag and buttons, hotspot buttons. The WebGL renderer plugs into `tourRender.fn` in stage 5; until then the sky colour shows behind the HUD.
+- **H10 360° planet** (`Planet.tsx`): heading fade, captions, "inside" HUD. A flat panorama strip (the reference's no-WebGL fallback) stands in until the stage-5 shader.
+
+**Plan change (client informed):** the two Canvas 2D pieces (fleet, tunnel) were built now instead of stage 5. Stage 5 keeps only WebGL: hero particles, 3D Quest, tiny planet shader, walkthrough renderer.
+
+**Engine changes**
+
+- `armReveals` no longer strips `.in` and skips `data-manual`: pages re-mount on navigation, and the hero reveals its own manual elements on mount (the strip ran after the hero's effect and hid the first headline line).
+- `measureAll()` ends with `ScrollTrigger.refresh()` (measures change section heights, e.g. the services track); `Providers` no longer refreshes separately.
+- `SplitText` got `bare` (letters without `data-split`) for captions whose parent animates them.
+
+**Differences from the reference**
+
+- Fleet: the hand-drawn headset fallback shown while the photo loads was not ported (the 537 px photo loads in milliseconds); nothing is drawn for that instant.
+- Planet HUD is no longer `aria-hidden` (it contains the Tilt button).
+
+**Tested** (production build, Playwright, 1440×900 and 390×844)
+
+- Every Home section screenshotted; pinned scenes at 10/40/65/90%. Hero autoplay wipe, tab switch (Property launches → "walk the flat.", CTA `?service=Real+estate+VR&note=We'd like VR for a property launch.`), orbit at 3 positions, fleet ripple and full sync (200/200), services horizontal track and phone stack, occasions active row + card, floor plan lens, walkthrough HUD room 2, hub teaser play + ask stages (5 yes, 3 no), tunnel step captions and the open portal.
+- Loader on Home lands on the visor, then the hero intro plays. Reduced motion: scrolls through the whole page without errors.
+- Zero console errors.
+
+**Revert**: `git revert` the stage-3 commit.

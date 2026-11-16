@@ -38,9 +38,11 @@ type Props = {
   manual?: boolean;
   ariaHidden?: boolean;
   label?: string;
+  /** letters only, no data-split: the parent animates them (hero and tunnel captions) */
+  bare?: boolean;
 };
 
-export function SplitText({ as: Tag = "span", text, lines, className, style, manual, ariaHidden, label }: Props) {
+export function SplitText({ as: Tag = "span", text, lines, className, style, manual, ariaHidden, label, bare }: Props) {
   const all = lines ?? [{ text: text ?? "" }];
   // running letter index: each line starts after the letters of the lines before it
   const letters = (t: string) => Array.from(t.replace(/\s+/g, "")).length;
@@ -59,7 +61,7 @@ export function SplitText({ as: Tag = "span", text, lines, className, style, man
     <Tag
       className={className}
       style={style}
-      data-split=""
+      data-split={bare ? undefined : ""}
       data-manual={manual ? "" : undefined}
       aria-hidden={ariaHidden || undefined}
       aria-label={ariaHidden ? undefined : (label ?? full)}

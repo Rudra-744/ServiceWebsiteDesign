@@ -1,4 +1,5 @@
 "use client";
+import { ScrollTrigger } from "./gsap";
 // Shared client state for the motion engine (reference site.js globals: RM, FINE, vw, vh, menuOpen, PRE.cover, busy).
 // One module-level object, so every canvas loop can check "is something covering the page?" without React re-renders.
 
@@ -42,6 +43,8 @@ export function measureAll() {
       console.warn(err);
     }
   });
+  // measures can change section heights (services track): scroll scenes re-read their positions
+  ScrollTrigger.refresh();
 }
 
 export function initEngine() {
