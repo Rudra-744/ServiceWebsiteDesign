@@ -122,65 +122,82 @@ export function Tour({ style }: { style?: CSSProperties }) {
 
   const s0 = TOUR_STOPS[0];
   return (
-    <section data-nav="Walkthrough" className="tour" aria-label="Virtual walkthrough of a sample apartment" style={style} ref={sec}>
-      <div className="tour-pin">
-        <canvas className="tour-cv" aria-hidden="true" />
+    <section ref={sec} data-nav="Walkthrough" className="tour relative h-[520vh] max-[820px]:h-[500vh]" aria-label="Virtual walkthrough of a sample apartment" style={style}>
+      <div className="sticky top-0 isolate h-svh overflow-hidden bg-[#c9daff]">
+        <canvas className="tour-cv absolute inset-0 block size-full cursor-grab touch-pan-y [&.drag]:cursor-grabbing" aria-hidden="true" />
         <div className="tour-hots">
           {TOUR_STOPS.map((s, i) => (
-            <button type="button" className="tour-hot" key={s.name} onClick={() => go(i)}>
-              <i />
+            <button
+              type="button"
+              key={s.name}
+              onClick={() => go(i)}
+              className="tour-hot pointer-events-none absolute top-0 left-0 inline-flex h-[38px] items-center gap-2 rounded-full bg-white pr-[14px] pl-[10px] text-[14px] font-[560] whitespace-nowrap text-ink opacity-0 shadow-[0_0_0_1px_var(--color-line)] will-change-transform [transform:translate(-50%,-50%)] [transition:opacity_.35s,background-color_.3s] hover:bg-blue max-[820px]:h-[34px] max-[820px]:text-[13px] [&.show]:pointer-events-auto [&.show]:opacity-100"
+            >
+              <i className="relative size-[18px] rounded-full bg-blue shadow-[0_0_0_3px_#fff] after:absolute after:-inset-[7px] after:animate-[hotPulse_1.8s_ease-out_infinite] after:rounded-full after:border-2 after:border-blue after:opacity-60 after:content-['']" />
               {s.name}
             </button>
           ))}
         </div>
-        <div className="tour-intro">
+        <div className="tour-intro absolute top-[calc(var(--nav-h)+40px)] left-(--pad) max-w-[460px] rounded-card bg-white px-[26px] pt-6 pb-[26px] text-ink shadow-[0_0_0_1px_var(--color-line)] will-change-[opacity,transform] max-[820px]:top-[calc(var(--nav-h)+28px)] max-[820px]:right-[calc(var(--pad)+122px)] max-[820px]:max-w-none max-[820px]:px-4 max-[820px]:pt-4 max-[820px]:pb-[18px]">
           <p className="tag" style={{ fontSize: 13 }}>
             Virtual sample house
           </p>
-          <h2 className="d3">Take the tour.</h2>
-          <p>This is what buyers see in the headset. Scroll to walk from room to room, and use the arrows or drag to look around.</p>
+          <h2 className="d3 mt-[6px] mb-[10px] max-[820px]:text-[26px]!">Take the tour.</h2>
+          <p className="m-0 text-[16px] text-stone max-[820px]:text-[14.5px]">This is what buyers see in the headset. Scroll to walk from room to room, and use the arrows or drag to look around.</p>
         </div>
-        <div className="tour-map">
-          <small>You are here</small>
+        <div className="absolute top-[calc(var(--nav-h)+40px)] right-(--pad) w-[clamp(120px,14vw,190px)] rounded-[18px] bg-white p-[10px] shadow-[0_0_0_1px_var(--color-line)] max-[820px]:top-[calc(var(--nav-h)+28px)] max-[820px]:w-[112px] max-[820px]:rounded-[14px] max-[820px]:p-2 [&_svg]:h-auto [&_svg]:w-full">
+          <small className="mx-[2px] mt-[2px] mb-[6px] block text-[11.5px] font-[540] text-muted max-[820px]:hidden">You are here</small>
           <span dangerouslySetInnerHTML={{ __html: MAP }} />
         </div>
-        <p className="tour-hint">Drag to look around</p>
-        <div className="tour-room" aria-live="polite">
-          <div className="txt">
-            <small>Room 1 of 4</small>
-            <b>{s0.name}</b>
-            <span>{s0.desc}</span>
+        <p className="tour-hint absolute top-[calc(var(--nav-h)+40px)] left-1/2 m-0 -translate-x-1/2 rounded-full bg-ink px-[14px] py-2 text-[13.5px] whitespace-nowrap text-white transition-opacity duration-500 max-[820px]:top-auto max-[820px]:bottom-[calc(12px+190px)] max-[820px]:left-3 max-[820px]:translate-x-0">
+          Drag to look around
+        </p>
+        <div
+          className="tour-room absolute bottom-[calc(28px+env(safe-area-inset-bottom,0px))] left-(--pad) w-[min(380px,calc(100%_-_2*var(--pad)_-_170px))] rounded-card bg-white px-5 pt-[18px] pb-5 text-ink shadow-[0_0_0_1px_var(--color-line)] max-[820px]:right-3 max-[820px]:bottom-[calc(12px+env(safe-area-inset-bottom,0px))] max-[820px]:left-3 max-[820px]:w-auto max-[820px]:pt-[14px] max-[820px]:pr-[calc(3*44px+2*5px+28px)] max-[820px]:pb-4 max-[820px]:pl-4"
+          aria-live="polite"
+        >
+          <div className="txt [transition:opacity_.3s,transform_.5s_var(--e-out)] [&.swap]:opacity-0 [&.swap]:[transform:translateY(8px)]">
+            <small className="block text-[13px] font-[540] text-muted">Room 1 of 4</small>
+            <b className="mt-1 mb-[6px] block text-[length:clamp(22px,2.2vw,32px)] leading-[1.05] font-[640] tracking-[-0.025em] [font-stretch:112%] max-[820px]:text-[21px]">{s0.name}</b>
+            <span className="block text-[15px] leading-[1.4] text-muted max-[820px]:text-[13.5px]">{s0.desc}</span>
           </div>
-          <div className="tour-ticks">
+          <div className="tour-ticks mt-[14px] grid grid-cols-4 gap-[5px]">
             {TOUR_STOPS.map((s) => (
-              <i key={s.name}>
-                <b />
+              <i key={s.name} className="relative h-[3px] overflow-hidden rounded-[2px] bg-[#e6e6ea]">
+                <b className="absolute inset-0 m-0 origin-left bg-blue [transform:scaleX(0)]" />
               </i>
             ))}
           </div>
         </div>
-        <p className="tour-note">Illustrative sample apartment</p>
-        <div className="tour-pad" role="group" aria-label="Walkthrough controls">
-          <button type="button" className="up" aria-label="Next room" onClick={() => go(Math.min(3, S.current.stop + 1))}>
+        <p className="absolute right-(--pad) bottom-[calc(28px+3*54px+2*6px+12px)] m-0 text-[12px] text-ink opacity-70 max-[820px]:hidden">Illustrative sample apartment</p>
+        <div
+          className="tour-pad absolute right-(--pad) bottom-[calc(28px+env(safe-area-inset-bottom,0px))] grid grid-cols-[repeat(3,54px)] grid-rows-[repeat(3,54px)] gap-[6px] max-[820px]:right-5 max-[820px]:bottom-[calc(22px+env(safe-area-inset-bottom,0px))] max-[820px]:grid-cols-[repeat(3,44px)] max-[820px]:grid-rows-[repeat(3,44px)] max-[820px]:gap-[5px]"
+          role="group"
+          aria-label="Walkthrough controls"
+        >
+          <button type="button" className={`up col-start-2 row-start-1 ${PADBTN} ${PADLIGHT}`} aria-label="Next room" onClick={() => go(Math.min(3, S.current.stop + 1))}>
             <svg aria-hidden="true"><use href="#i-up" /></svg>
           </button>
-          <button type="button" className="lt" aria-label="Look left" onClick={() => ((S.current.yawT -= 45), (S.current.dirty = true))}>
+          <button type="button" className={`col-start-1 row-start-2 ${PADBTN} ${PADLIGHT}`} aria-label="Look left" onClick={() => ((S.current.yawT -= 45), (S.current.dirty = true))}>
             <svg aria-hidden="true"><use href="#i-turnl" /></svg>
           </button>
-          <button type="button" className="ct" aria-label="Look ahead" onClick={() => ((S.current.yawT = 0), (S.current.pitT = 0), (S.current.dirty = true))}>
+          <button type="button" className={`col-start-2 row-start-2 ${PADBTN} rounded-full! bg-ink text-white`} aria-label="Look ahead" onClick={() => ((S.current.yawT = 0), (S.current.pitT = 0), (S.current.dirty = true))}>
             <svg aria-hidden="true"><use href="#i-eye" /></svg>
           </button>
-          <button type="button" className="rt" aria-label="Look right" onClick={() => ((S.current.yawT += 45), (S.current.dirty = true))}>
+          <button type="button" className={`col-start-3 row-start-2 ${PADBTN} ${PADLIGHT}`} aria-label="Look right" onClick={() => ((S.current.yawT += 45), (S.current.dirty = true))}>
             <svg aria-hidden="true"><use href="#i-turnr" /></svg>
           </button>
-          <button type="button" className="dn" aria-label="Previous room" onClick={() => go(Math.max(0, S.current.stop - 1))}>
-            <svg aria-hidden="true" style={{ transform: "rotate(180deg)" }}><use href="#i-up" /></svg>
+          <button type="button" className={`dn col-start-2 row-start-3 ${PADBTN} ${PADLIGHT}`} aria-label="Previous room" onClick={() => go(Math.max(0, S.current.stop - 1))}>
+            <svg aria-hidden="true" className="rotate-180"><use href="#i-up" /></svg>
           </button>
         </div>
       </div>
     </section>
   );
 }
+
+const PADBTN = "grid place-items-center rounded-[16px] [transition:background-color_.3s,color_.3s,transform_.35s_var(--e-spring)] active:[transform:scale(.9)] disabled:pointer-events-none disabled:opacity-40 max-[820px]:rounded-[13px] [&_svg]:size-[22px] max-[820px]:[&_svg]:size-[19px]";
+const PADLIGHT = "bg-white text-ink shadow-[0_0_0_1px_var(--color-line)] hover:bg-blue hover:shadow-none";
 
 /** stage 5 sets this to the WebGL renderer (loaded lazily) */
 export const tourRender: { fn: null | ((root: HTMLElement, cam: TourCam, stop: number) => void) } = { fn: null };

@@ -227,55 +227,64 @@ export function Fleet({ variant }: { variant: "pin" | "view" }) {
 
   useScrollScene(sec, (p) => F.current.draw(p), variant === "pin" ? { type: "pin" } : { type: "view", start: 0.85, end: 0.2 });
 
-  const vis = (
-    <div className="fleet-vis">
-      <canvas className="fleet-cv" aria-hidden="true" />
-      <div className="fleet-stats">
-        <span>
-          <i />
-          Deployed <b className="fs-dep num">0</b>
-        </span>
-        <span>
-          <i className="on" />
-          Connected <b className="fs-con num">0</b>
-        </span>
-      </div>
+  const stats = (
+    <div className="flex flex-wrap gap-x-[22px] gap-y-2 text-[14.5px] font-[540] text-ink max-[960px]:flex-none max-[960px]:gap-x-[18px] max-[960px]:gap-y-[6px] max-[960px]:text-[13.5px] [&_b]:min-w-[2.4em] [&_b]:font-[660] [&_b]:[font-stretch:110%] [&>span]:inline-flex [&>span]:items-center [&>span]:gap-2">
+      <span>
+        <i className="size-[9px] rounded-full shadow-[inset_0_0_0_1.5px_currentColor]" />
+        Deployed <b className="fs-dep tabular-nums">0</b>
+      </span>
+      <span>
+        <i className="size-[9px] rounded-full bg-current" />
+        Connected <b className="fs-con tabular-nums">0</b>
+      </span>
     </div>
   );
   if (variant === "pin")
     return (
-      <section data-nav="200+ headsets" className="fleet wrap" aria-label="Our headset fleet" ref={sec}>
-        <div className="fleet-pin">
-          <div>
-            <p className="fleet-num num" aria-label="200+">
-              <span className="fleet-count" aria-hidden="true">0</span>
-              <span className="plus" aria-hidden="true">+</span>
+      <section ref={sec} data-nav="200+ headsets" className="fleet wrap relative h-[300vh] max-[960px]:h-[280vh]" aria-label="Our headset fleet">
+        <div className="sticky top-0 isolate grid h-svh grid-cols-1 content-center gap-[clamp(18px,3vh,34px)] px-[clamp(24px,4.5vw,72px)] pt-[calc(var(--nav-h)+58px)] pb-[50px] before:absolute before:inset-x-0 before:top-[calc(var(--nav-h)+26px)] before:bottom-[22px] before:-z-1 before:rounded-stage before:bg-blue before:content-[''] max-[960px]:flex max-[960px]:flex-col max-[960px]:justify-start max-[960px]:gap-0 max-[960px]:px-[22px] max-[960px]:pt-[calc(var(--nav-h)+52px)] max-[960px]:pb-[44px]">
+          <div className="min-[960px]:flex min-[960px]:items-end min-[960px]:justify-between min-[960px]:gap-[5vw] max-[960px]:block max-[960px]:flex-none">
+            <p className="m-0 flex items-start text-[length:clamp(110px,13vw,230px)] leading-[.8] font-bold tracking-[-0.06em] tabular-nums [font-stretch:122%] max-[960px]:text-[length:clamp(64px,20vw,112px)]" aria-label="200+">
+              <span className="fleet-count" aria-hidden="true">
+                0
+              </span>
+              <span className="plus inline-block origin-[20%_60%] text-white [transform:scale(0)] [transition:transform_.7s_var(--e-spring)] [&.on]:[transform:none]" aria-hidden="true">
+                +
+              </span>
             </p>
-            <div className="fleet-copy">
-              <h2 className="d3">Headsets, connected and ready.</h2>
-              <p className="body">Deployed, synced and run from one console — enough for a classroom, a conference hall or a full expo floor, with our team on hand to support.</p>
+            <div className="mt-[clamp(14px,2vw,28px)] grid max-w-[30em] gap-[14px] min-[960px]:mt-0 min-[960px]:mb-[.6em] min-[960px]:max-w-[27em] max-[960px]:mt-3 max-[960px]:max-w-none max-[960px]:gap-2">
+              <h2 className="d3 max-[960px]:text-[length:clamp(24px,6.8vw,32px)]! max-[960px]:leading-[1.05]!">Headsets, connected and ready.</h2>
+              <p className="m-0 max-w-[36em] text-[rgba(5,5,5,.78)] max-[960px]:text-[14px] max-[960px]:leading-[1.45] [@media(max-width:959px)_and_(max-height:800px)]:hidden">
+                Deployed, synced and run from one console — enough for a classroom, a conference hall or a full expo floor, with our team on hand to support.
+              </p>
             </div>
           </div>
-          {vis}
+          <div className="grid w-full min-w-0 gap-[14px] max-[960px]:mt-[18px] max-[960px]:flex max-[960px]:min-h-0 max-[960px]:flex-[1_1_0] max-[960px]:flex-col max-[960px]:gap-3">
+            <canvas className="fleet-cv block w-full min-[960px]:h-[min(46vh,500px)] max-[960px]:min-h-0 max-[960px]:flex-[1_1_0]" aria-hidden="true" />
+            {stats}
+          </div>
         </div>
       </section>
     );
   return (
-    <section data-nav="200+ headsets" className="sec-tight wrap rfleet" ref={sec}>
-      <div className="statband">
+    <section ref={sec} data-nav="200+ headsets" className="sec-tight wrap">
+      <div className="grid gap-[clamp(28px,4vw,64px)] min-[960px]:grid-cols-[1fr_1.1fr] min-[960px]:items-center">
         <div>
-          <p className="stat-num num" aria-label="200+">
-            <span className="fleet-count" aria-hidden="true">0</span>
-            <em className="plus" style={{ display: "inline-block", fontStyle: "normal" }} aria-hidden="true">+</em>
+          <p className="m-0 text-[length:clamp(96px,16vw,280px)] leading-[.8] font-bold tracking-[-0.06em] tabular-nums [font-stretch:122%]" aria-label="200+">
+            <span className="fleet-count" aria-hidden="true">
+              0
+            </span>
+            <em className="plus inline-block text-blue not-italic" aria-hidden="true">
+              +
+            </em>
           </p>
-          <h2 className="d3" style={{ marginTop: 20 }}>
-            Headsets available for rental.
-          </h2>
-          <p className="body" style={{ marginTop: 12 }}>
-            A reliable partner for small sessions and large-scale events alike.
-          </p>
+          <h2 className="d3 mt-5">Headsets available for rental.</h2>
+          <p className="body-copy mt-3">A reliable partner for small sessions and large-scale events alike.</p>
         </div>
-        {vis}
+        <div className="grid w-full min-w-0 gap-[14px]">
+          <canvas className="fleet-cv block aspect-[20/10.6] w-full rounded-card bg-blue max-[960px]:aspect-[10/12.4]" aria-hidden="true" />
+          {stats}
+        </div>
       </div>
     </section>
   );

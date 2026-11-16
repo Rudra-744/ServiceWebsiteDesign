@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <div className="page" data-page="home">
       <Hero />
-      <section data-nav="What we do" className="mani wrap" aria-label="What Cyphon does">
+      <section data-nav="What we do" className="wrap pt-[clamp(110px,15vw,240px)] pb-[clamp(80px,10vw,160px)]" aria-label="What Cyphon does">
         <ScrubWords parts={MANIFESTO} />
       </section>
       <Orbit />
@@ -38,21 +38,21 @@ export default function Home() {
       />
       <Tour />
       <Planet />
-      <div className="wrap pl-after">
-        <div className="chips" data-reveal="">
-          <span className="chip pop" style={{ "--i": 0 } as CSSProperties}>
+      <div className="wrap pt-2 pb-[clamp(72px,9vw,140px)]">
+        <div className="flex flex-wrap gap-[10px]" data-reveal="">
+          <span className={CHIP} style={{ "--i": 0 } as CSSProperties}>
             <svg aria-hidden="true"><use href="#i-cam" /></svg>Events &amp; functions
           </span>
-          <span className="chip pop" style={{ "--i": 1 } as CSSProperties}>
+          <span className={CHIP} style={{ "--i": 1 } as CSSProperties}>
             <svg aria-hidden="true"><use href="#i-lock" /></svg>Restricted areas*
           </span>
-          <span className="chip pop" style={{ "--i": 2 } as CSSProperties}>
+          <span className={CHIP} style={{ "--i": 2 } as CSSProperties}>
             <svg aria-hidden="true"><use href="#i-sparkle" /></svg>Custom projects
           </span>
         </div>
-        <p className="foot-note">
+        <p className="mt-[18px] mb-0 text-[14px] text-stone">
           *Restricted area visits are subject to filming permissions.{" "}
-          <Link className="link" href="/360-video" style={{ marginLeft: 10 }}>
+          <Link className="link ml-[10px]" href="/360-video">
             Create your 360° video
           </Link>
         </p>
@@ -63,3 +63,5 @@ export default function Home() {
     </div>
   );
 }
+
+const CHIP = "pop inline-flex h-11 items-center gap-2 rounded-full bg-card px-[18px] text-[15.5px] font-[540] [font-stretch:102%] shadow-[inset_0_0_0_1px_var(--color-line)] [&_svg]:size-[18px] [&_svg]:flex-none";

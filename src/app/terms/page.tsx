@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="page wrap sec" data-page="terms">
       <h1 className="d2">Terms</h1>
-      <p className="lede" style={{ marginTop: 24 }}>
+      <p className="lede mt-6!">
         TODO: the client will provide the terms text.
       </p>
     </div>

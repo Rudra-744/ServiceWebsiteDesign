@@ -195,7 +195,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
       // hold the old page on screen while Next swaps it underneath
       const main = document.getElementById("main")!;
       const fz = document.createElement("div");
-      fz.className = "morph-freeze";
+      fz.className = "morph-freeze pointer-events-none fixed inset-0 z-57 overflow-hidden bg-paper";
       fz.setAttribute("aria-hidden", "true");
       const copy = main.cloneNode(true) as HTMLElement;
       copy.removeAttribute("id");
@@ -205,7 +205,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
       const foot = document.querySelector<HTMLElement>(".foot");
       if (foot) {
         const fc = foot.cloneNode(true) as HTMLElement;
-        if (foot.classList.contains("static")) fc.style.transform = copy.style.transform;
+        if (foot.classList.contains("is-static")) fc.style.transform = copy.style.transform;
         fz.appendChild(fc);
       }
       document.body.appendChild(fz);
@@ -250,12 +250,12 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
   return (
     <>
       {children}
-      <div className="morph" aria-hidden="true" ref={box}>
+      <div className="morph pointer-events-none invisible fixed top-0 left-0 z-58 size-0 overflow-hidden bg-blue will-change-[left,top,width,height] [&.on]:pointer-events-auto [&.on]:visible" aria-hidden="true" ref={box}>
         {/* eslint-disable-next-line @next/next/no-img-element -- src is set at runtime from the tapped card */}
-        <img className="morph-img" alt="" />
+        <img className="morph-img absolute inset-0 size-full object-cover opacity-0" alt="" />
         {/* eslint-disable-next-line @next/next/no-img-element -- src is set at runtime from the target */}
-        <img className="morph-img2" alt="" />
-        <span className="morph-lbl">
+        <img className="morph-img2 absolute inset-0 size-full object-cover opacity-0" alt="" />
+        <span className="morph-lbl absolute inset-0 grid place-items-center overflow-hidden px-(--pad) text-center text-[length:clamp(36px,6vw,92px)] font-[620] tracking-[-0.035em] [font-stretch:116%] [&_span]:block [&_span]:opacity-0">
           <span />
         </span>
       </div>

@@ -49,35 +49,32 @@ export function FloorPlan({ nav, tag, title, lede, steps, label }: Props) {
   });
 
   return (
-    <section data-nav={nav} className="plan-sec wrap" aria-label={label} ref={sec}>
-      <div className="plan-pin">
-        <div className="plan-copy">
+    <section ref={sec} data-nav={nav} className="plan-sec wrap relative h-[420vh] max-[960px]:h-[400vh]" aria-label={label}>
+      <div className="sticky top-0 grid h-svh grid-cols-1 grid-rows-[auto_1fr] gap-3 overflow-hidden pt-[calc(var(--nav-h)+28px)] pb-5 min-[960px]:grid-cols-[1fr_1.1fr] min-[960px]:grid-rows-1 min-[960px]:items-center min-[960px]:gap-[5vw] min-[960px]:pt-(--nav-h)">
+        <div>
           <p className="tag">{tag}</p>
-          <h2 className="d2" style={{ marginTop: 14 }}>
-            {title}
-          </h2>
-          {lede && (
-            <p className="lede" style={{ marginTop: 20 }}>
-              {lede}
-            </p>
-          )}
-          <div className="steps">
-            <span className="steps-line">
-              <i />
+          <h2 className="d2 mt-[14px]">{title}</h2>
+          {lede && <p className="lede mt-5 max-[960px]:hidden">{lede}</p>}
+          <div className="relative mt-7 grid gap-1 pl-7 max-[960px]:hidden">
+            <span className="steps-line absolute top-[10px] bottom-[10px] left-[7px] w-[2px] bg-line">
+              <i className="absolute inset-0 origin-top bg-blue [transform:scaleY(0)]" />
             </span>
             {steps.map(([b, s]) => (
-              <div className="step" key={b}>
-                <b>{b}</b>
-                <span>{s}</span>
+              <div
+                key={b}
+                className="step relative py-[10px] opacity-[.32] transition-opacity duration-500 before:absolute before:top-4 before:-left-[27px] before:size-[14px] before:rounded-full before:bg-paper before:shadow-[inset_0_0_0_2px_var(--color-line)] before:[transition:background-color_.4s,box-shadow_.4s] before:content-[''] [&.on]:opacity-100 [&.on]:before:bg-blue [&.on]:before:shadow-[inset_0_0_0_2px_var(--color-blue)]"
+              >
+                <b className="block text-[length:clamp(20px,1.7vw,26px)] font-[620] tracking-[-0.02em] [font-stretch:108%]">{b}</b>
+                <span className="block max-w-[30em] text-[15.5px] text-stone">{s}</span>
               </div>
             ))}
           </div>
-          <div className="plan-mob-step" aria-hidden="true">
+          <div className="plan-mob-step hidden max-[960px]:mt-[14px] max-[960px]:block max-[960px]:min-h-[96px] [&_b]:block [&_b]:text-[20px] [&_b]:font-[620] [&_b]:[font-stretch:108%] [&_span]:block [&_span]:text-[15.5px] [&_span]:text-stone" aria-hidden="true">
             <b />
             <span />
           </div>
         </div>
-        <div className="plan-vis" dangerouslySetInnerHTML={{ __html: planSVG(id) }} />
+        <div className="plan-vis relative w-full max-w-[640px] self-center justify-self-center max-[960px]:max-w-[min(92vw,520px)]" dangerouslySetInnerHTML={{ __html: planSVG(id) }} />
       </div>
     </section>
   );

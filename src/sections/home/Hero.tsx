@@ -333,70 +333,100 @@ export function Hero() {
   });
 
   return (
-    <section data-nav="Intro" className="hero" aria-label="Introduction" ref={sec}>
-      <div className="hero-pin" ref={pin}>
-        <div className="hl-wrap">
-          <h1 className="hero-title d1">
-            <span className="hl-was fade" aria-hidden="true">
+    <section ref={sec} data-nav="Intro" className="hero relative h-[380vh] max-[820px]:h-[340vh]" aria-label="Introduction">
+      <div
+        ref={pin}
+        className="hero-pin sticky top-0 h-svh overflow-hidden [--hl-fs:clamp(44px,7.4vw,134px)] [--hl-top:calc(var(--nav-h)+clamp(18px,3.4vh,44px)+clamp(38px,2.3vw,46px)+52px+clamp(10px,1.6vh,22px))] max-[820px]:[--hl-fs:clamp(40px,11.4vw,64px)] max-[820px]:[--hl-top:calc(var(--nav-h)+104px)]"
+      >
+        <div className="hl-wrap pointer-events-none absolute inset-0 will-change-[opacity,transform]">
+          <h1 className={`hero-title ${HL_POS} will-change-[transform,opacity]`}>
+            <span className="hl-was fade absolute bottom-[calc(100%+clamp(10px,1.6vh,22px))] left-0 inline-flex h-7 items-center rounded-full px-3 text-[13px] leading-none font-semibold tracking-normal whitespace-nowrap text-muted shadow-[inset_0_0_0_1.5px_var(--color-line)] [font-stretch:100%] max-[820px]:h-6 max-[820px]:px-[10px] max-[820px]:text-[12px]" aria-hidden="true">
               Without VR
             </span>
             <span className="sr-only" data-hl-sr="">
               {srText(P0)}
             </span>
-            <span className="hl-real" aria-hidden="true" data-split="" data-manual="" dangerouslySetInnerHTML={{ __html: pairHTML(P0.l1, P0.real) }} />
+            <span className={`hl-real ${HL_LINES}`} aria-hidden="true" data-split="" data-manual="" dangerouslySetInnerHTML={{ __html: pairHTML(P0.l1, P0.real) }} />
           </h1>
-          <div className="hl-fx" aria-hidden="true">
-            <div className="hl-lens">
-              <i className="hl-grid" />
-              <div className="hl-vr d1" data-split="" data-manual="" dangerouslySetInnerHTML={{ __html: pairHTML(P0.l1, P0.vr) }} />
+          <div className="hl-fx pointer-events-none absolute inset-0 will-change-[transform,opacity]" aria-hidden="true">
+            <div className="hl-lens absolute inset-0 overflow-hidden bg-blue [clip-path:circle(0px_at_50%_50%)]">
+              <i className="hl-grid absolute -inset-20 bg-[radial-gradient(rgba(5,5,5,.18)_1.2px,transparent_1.5px)] bg-size-[24px_24px] [transform:translate3d(var(--gx,0px),var(--gy,0px),0)]" />
+              <div className={`hl-vr ${HL_POS} text-ink ${HL_LINES}`} data-split="" data-manual="" dangerouslySetInnerHTML={{ __html: pairHTML(P0.l1, P0.vr) }} />
             </div>
-            <svg className="hl-rim">
-              <path />
-              <circle className="hl-d2" r="6" />
+            <svg className="hl-rim absolute top-0 left-0 size-full overflow-visible">
+              <path className="fill-none stroke-[rgba(5,5,5,.38)] [stroke-linecap:round] [stroke-width:1.5]" />
+              <circle className="hl-d2 fill-blue stroke-white opacity-0 [stroke-width:3]" r="6" />
             </svg>
-            <span className="hl-tag">
-              <b>With Cyphon</b>
-              <small>Slide along the line</small>
+            <span className="hl-tag group/tag absolute top-0 left-0 flex flex-row-reverse items-center gap-[10px] whitespace-nowrap opacity-[var(--to,0)] [transform:translate3d(var(--tx,-9999px),var(--ty,0px),0)_translateX(-100%)] max-[820px]:gap-2">
+              <b className="inline-flex h-7 items-center rounded-full bg-ink px-3 text-[13px] font-[620] text-white max-[820px]:h-6 max-[820px]:px-[10px] max-[820px]:text-[12px]">With Cyphon</b>
+              <small className="text-[13px] text-muted transition-opacity duration-400 group-[.used]/tag:opacity-0 max-[820px]:hidden">Slide along the line</small>
             </span>
           </div>
         </div>
-        <div className="hl-tabs fade" role="tablist" aria-label="Choose your occasion" data-manual="">
-          <span className="hl-for">For</span>
+        <div
+          className="hl-tabs fade absolute top-[calc(var(--nav-h)+clamp(18px,3.4vh,44px))] right-(--pad) left-(--pad) z-3 flex flex-wrap items-center gap-2 will-change-[opacity,transform] max-[820px]:top-[calc(var(--nav-h)+16px)] max-[820px]:mr-[calc(var(--pad)*-1)] max-[820px]:flex-nowrap max-[820px]:overflow-x-auto max-[820px]:pr-(--pad) max-[820px]:[scrollbar-width:none] max-[820px]:[&::-webkit-scrollbar]:hidden"
+          role="tablist"
+          aria-label="Choose your occasion"
+          data-manual=""
+        >
+          <span className="mr-1 text-[length:clamp(14px,.85vw,16px)] text-muted max-[820px]:hidden">For</span>
           {HERO_PAIRS.map((p, i) => (
-            <button type="button" key={p.tab} className={`hl-tab${i === 0 ? " on" : ""}`} role="tab" aria-selected={i === 0} tabIndex={i === 0 ? 0 : -1}>
+            <button
+              type="button"
+              key={p.tab}
+              className={`hl-tab relative h-[clamp(38px,2.3vw,46px)] cursor-pointer overflow-hidden rounded-full border-0 px-[clamp(15px,1vw,20px)] text-[length:clamp(14px,.88vw,17px)] font-[580] whitespace-nowrap [transition:background-color_.3s,color_.3s] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue max-[820px]:h-9 max-[820px]:flex-none max-[820px]:px-[14px] max-[820px]:text-[14px] [&:not(.on)]:bg-card [&:not(.on)]:text-ink hover:[&:not(.on)]:bg-[#e8e8ec] [&.on]:bg-ink [&.on]:text-white ${i === 0 ? "on" : ""}`}
+              role="tab"
+              aria-selected={i === 0}
+              tabIndex={i === 0 ? 0 : -1}
+            >
               {p.tab}
-              <i />
+              <i className="absolute inset-x-0 bottom-0 h-[3px] origin-left bg-blue [transform:scaleX(var(--pg,0))]" />
             </button>
           ))}
         </div>
-        <div className="hero-side" data-manual="">
-          <p className="lede fade hl-lede">
-            <span>{P0.lede}</span>
+        <div className="hero-side absolute bottom-[clamp(28px,7vh,80px)] left-(--pad) z-3 max-w-[390px] will-change-[opacity,transform] min-[820px]:max-w-[clamp(440px,34vw,640px)] max-[820px]:right-(--pad) max-[820px]:bottom-6 max-[820px]:max-w-none" data-manual="">
+          <p className="hl-lede fade mb-6 max-w-[34em] text-[18px] leading-[1.45] text-stone min-[1100px]:text-[length:clamp(18px,1.12vw,24px)] max-[820px]:mb-[18px] max-[820px]:text-[16.5px] [@media(max-width:819px)_and_(max-height:700px)]:hidden">
+            <span className="inline-block [transition:opacity_.25s,transform_.45s_var(--e-out)] [&.swap]:opacity-0 [&.swap]:[transform:translateY(8px)]">{P0.lede}</span>
           </p>
-          <div className="btns fade" style={{ "--d": ".3s" } as CSSProperties}>
-            <Button href={ctaHref(P0)} label={P0.cta} variant="blue" magnetic className="hl-cta" />
-            <Button href={P0.more[0]} label={P0.more[1]} variant="line" className="hl-more" />
+          <div className="btns fade flex flex-wrap gap-3" style={{ "--d": ".3s" } as CSSProperties}>
+            <Button href={ctaHref(P0)} label={P0.cta} variant="blue" magnetic className={`hl-cta ${HERO_BTN}`} />
+            <Button href={P0.more[0]} label={P0.more[1]} variant="line" className={`hl-more ${HERO_BTN} max-[820px]:hidden`} />
           </div>
-          <p className="hl-proof fade" style={{ "--d": ".45s" } as CSSProperties}>
+          <p
+            className="hl-proof fade mt-[18px] text-[length:clamp(13px,.8vw,15px)] text-muted [@media(max-width:819px)_and_(max-height:779.98px)]:hidden [@media(max-width:819px)_and_(min-height:780px)]:mt-3 [@media(max-width:819px)_and_(min-height:780px)]:text-[12.5px]"
+            style={{ "--d": ".45s" } as CSSProperties}
+          >
             {HERO_PROOF}
           </p>
         </div>
-        <div className="hero-hint fade" data-manual="">
-          <i />
+        <div className="hero-hint fade absolute top-[calc(var(--nav-h)+40px)] right-(--pad) flex items-center gap-[10px] text-[14px] text-muted max-[820px]:hidden" data-manual="">
+          <i className="relative h-[34px] w-[1.5px] overflow-hidden bg-line after:absolute after:inset-x-0 after:top-0 after:h-[40%] after:animate-[hint_1.8s_var(--e-io)_infinite] after:bg-ink after:content-['']" />
           Scroll to put it on
         </div>
 
-        <div className="fov" aria-hidden="true" />
-        <div className="visor" data-morph-to="">
-          <Image className="q3" src="/images/quest3.png" alt="Meta Quest 3 headset" width={537} height={402} priority draggable={false} sizes="(max-width: 819px) 82vw, (min-width: 1100px) min(32vw, 52vh), min(40vw, 580px)" />
-          <canvas className="q3-cv" role="img" aria-label="3D model of the Meta Quest 3. Drag to rotate it in any direction." />
+        <div className="fov absolute inset-0 overflow-hidden bg-blue text-ink will-change-[clip-path] [clip-path:circle(0px_at_50%_50%)]" aria-hidden="true" />
+        <div
+          className="visor group/visor pointer-events-none absolute right-(--pad) bottom-[clamp(36px,9vh,110px)] w-[min(40vw,580px)] [--f:-20%] will-change-[transform,opacity] min-[1100px]:w-[min(32vw,52vh)] max-[820px]:top-[38%] max-[820px]:right-auto max-[820px]:bottom-auto max-[820px]:left-[9vw] max-[820px]:w-[82vw] [&.gl]:pointer-events-auto [&.gl]:cursor-grab [&.gl]:touch-none [&.gl.drag]:cursor-grabbing"
+          data-morph-to=""
+        >
+          <Image
+            className={`q3 block h-auto w-full select-none ${DISSOLVE} group-[.idle]/visor:animate-[q3Float_6s_ease-in-out_infinite] group-[.gl]/visor:animate-none! group-[.gl]/visor:opacity-0 group-[.gl]/visor:[transition:opacity_.7s_var(--e-out)] rm:animate-none!`}
+            src="/images/quest3.png"
+            alt="Meta Quest 3 headset"
+            width={537}
+            height={402}
+            priority
+            draggable={false}
+            sizes="(max-width: 819px) 82vw, (min-width: 1100px) min(32vw, 52vh), min(40vw, 580px)"
+          />
+          <canvas className={`q3-cv pointer-events-none absolute -top-1/4 -left-1/4 block size-[150%] opacity-0 [transition:opacity_.7s_var(--e-out)] ${DISSOLVE} group-[.gl]/visor:opacity-100`} role="img" aria-label="3D model of the Meta Quest 3. Drag to rotate it in any direction." />
         </div>
-        <canvas className="fov-cv" aria-hidden="true" />
-        <div className="fov-caps" aria-hidden="true">
+        <canvas className="fov-cv pointer-events-none absolute inset-0 block size-full" aria-hidden="true" />
+        <div className="pointer-events-none absolute right-(--pad) bottom-[clamp(40px,9vh,100px)] left-(--pad) h-0 max-[820px]:bottom-[calc(36px+env(safe-area-inset-bottom,0px))]" aria-hidden="true">
           {HERO_CAPS.map(([small, t]) => (
-            <p className="fov-cap" key={t}>
-              <small>{small}</small>
-              <SplitText className="fc-t" text={t} ariaHidden bare />
+            <p className="fov-cap group/cap absolute inset-x-0 bottom-0 m-0 text-ink" key={t}>
+              <small className="mb-3 block text-[14px] font-[560] tracking-normal opacity-0 [font-stretch:100%] [transform:translateY(10px)] [transition:opacity_.4s,transform_.6s_var(--e-out)] group-[.on]/cap:opacity-[.72] group-[.on]/cap:[transform:none] group-[.on]/cap:delay-150 group-[.notr]/cap:transition-none!">{small}</small>
+              <SplitText className={`fc-t block max-w-[12ch] text-[length:clamp(36px,5.8vw,100px)] leading-[.94] font-[650] tracking-[-0.04em] [font-stretch:118%] max-[820px]:text-[length:clamp(32px,9.6vw,48px)] ${CAP_LETTERS}`} text={t} ariaHidden bare />
             </p>
           ))}
         </div>
@@ -404,3 +434,13 @@ export function Hero() {
     </section>
   );
 }
+
+// headline and the VR band line share one absolute position and the fitted font size (--hl-fs beats .d1)
+const HL_POS = "d1 absolute top-(--hl-top) right-(--pad) left-(--pad) m-0 text-(length:--hl-fs)!";
+// runtime-generated lines (.hl-1/.hl-2) are block spans sized to their text
+const HL_LINES = "split split-rise [&_.hl-1]:block [&_.hl-1]:w-fit [&_.hl-2]:block [&_.hl-2]:w-fit";
+const HERO_BTN = "min-[1100px]:h-[clamp(54px,3.1vw,64px)]! min-[1100px]:px-[clamp(26px,1.6vw,34px)]! min-[1100px]:text-[length:clamp(15.5px,.9vw,18px)]! max-[820px]:h-[50px]! max-[820px]:px-[22px]!";
+// the photo and the 3D canvas dissolve left to right with the --f mask edge
+const DISSOLVE = "[-webkit-mask-image:linear-gradient(90deg,transparent_calc(var(--f)_-_5%),#000_calc(var(--f)_+_5%))] [mask-image:linear-gradient(90deg,transparent_calc(var(--f)_-_5%),#000_calc(var(--f)_+_5%))]";
+// caption letters rise in (.on) and leave upwards (.gone); .notr resets without animating
+const CAP_LETTERS = "[&_.c]:inline-block [&_.c]:[transform:translate3d(0,112%,0)] [&_.c]:[transition:transform_.85s_var(--e-out)_calc(var(--i)*14ms)] group-[.on]/cap:[&_.c]:[transform:none] group-[.gone]/cap:[&_.c]:[transform:translate3d(0,-112%,0)] group-[.gone]/cap:[&_.c]:[transition:transform_.5s_var(--e-out)_calc(var(--i)*5ms)] group-[.notr]/cap:[&_.c]:transition-none!";

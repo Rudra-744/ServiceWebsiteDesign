@@ -217,41 +217,44 @@ export function FinalCta() {
   });
 
   return (
-    <section data-nav="Get started" className="fin" aria-label="How we work and start a project" ref={sec}>
-      <div className="fin-pin">
-        <canvas className="tun-cv" aria-hidden="true" />
-        <ol className="sr">
+    <section data-nav="Get started" className="relative h-[470vh] max-[819px]:h-[430vh]" aria-label="How we work and start a project" ref={sec}>
+      <div className="sticky top-0 h-svh overflow-hidden bg-paper">
+        <canvas className="tun-cv absolute inset-0 block size-full" aria-hidden="true" />
+        <ol className="sr-only">
           {FIN_CAPS.slice(1).map(([, t]) => (
             <li key={t}>{t}</li>
           ))}
         </ol>
-        <div className="tun-caps" aria-hidden="true">
+        <div className="pointer-events-none absolute top-1/2 left-1/2 z-3 h-0 w-[min(88vw,940px)] -translate-x-1/2 text-center" aria-hidden="true">
           {FIN_CAPS.map(([s, t]) => (
-            <p className="tun-cap" key={t}>
-              <small>{s}</small>
-              <SplitText className="tc-t" text={t} ariaHidden bare />
+            <p
+              className="tun-cap group/tc absolute inset-x-0 top-0 m-0 -translate-y-1/2 text-ink [&_.c]:inline-block [&_.c]:[transform:translate3d(0,112%,0)] [&_.c]:[transition:transform_.85s_var(--e-out)_calc(var(--i)*13ms)] [&.gone_.c]:[transform:translate3d(0,-112%,0)] [&.gone_.c]:[transition:transform_.5s_var(--e-out)_calc(var(--i)*5ms)] [&.notr_.c]:transition-none! [&.on_.c]:[transform:none]"
+              key={t}
+            >
+              <small className="mb-4 block text-[14px] font-[560] text-blue-deep opacity-0 [transform:translateY(10px)] [transition:opacity_.4s,transform_.6s_var(--e-out)] group-[.notr]/tc:transition-none! group-[.on]/tc:opacity-100 group-[.on]/tc:[transform:none] group-[.on]/tc:delay-[.12s]">{s}</small>
+              <SplitText className="mx-auto block max-w-[13ch] text-[length:clamp(34px,5vw,84px)] leading-[.95] font-[650] tracking-[-0.04em] [font-stretch:118%] max-[819px]:text-[length:clamp(30px,8.8vw,46px)]" text={t} ariaHidden bare />
             </p>
           ))}
         </div>
-        <div className="fin-portal">
-          <span className="fin-ring r1" />
-          <span className="fin-ring r2" />
-          <span className="fin-ring r3" />
-          <div className="fin-inner">
-            <p className="tag fade" style={{ "--d": "0s" } as CSSProperties}>
+        <div className="fin-portal absolute inset-0 z-2 grid place-items-center bg-blue px-(--pad) pt-[calc(var(--nav-h)+20px)] pb-8 text-center text-ink [clip-path:circle(0px_at_50%_50%)] will-change-[clip-path]">
+          <span className={`${RING} size-[62vmax] -mt-[31vmax] -ml-[31vmax] border-dashed border-white/55 [animation:spin_60s_linear_infinite]`} />
+          <span className={`${RING} size-[90vmax] -mt-[45vmax] -ml-[45vmax] border-solid border-white/28 [animation:spin_60s_linear_infinite_reverse]`} />
+          <span className={`${RING} size-[124vmax] -mt-[62vmax] -ml-[62vmax] border-dashed border-white/35 [animation:spin_90s_linear_infinite]`} />
+          <div className="fin-inner relative grid max-w-[980px] justify-items-center gap-6 max-[819px]:gap-[18px]">
+            <p className="tag fade text-[rgba(5,5,5,.66)]!" style={{ "--d": "0s" } as CSSProperties}>
               Your turn
             </p>
-            <SplitText as="h2" className="d1 fin-title" text="Let's build an immersive experience together." manual />
-            <p className="fin-sub fade" style={{ "--d": ".45s" } as CSSProperties}>
+            <SplitText as="h2" className="d1 fin-title text-[length:clamp(40px,7.2vw,124px)]! max-[819px]:text-[length:clamp(36px,10.4vw,56px)]!" text="Let's build an immersive experience together." manual />
+            <p className="fade m-0 max-w-[30em] text-[length:clamp(17px,1.5vw,22px)] text-[rgba(5,5,5,.78)]" style={{ "--d": ".45s" } as CSSProperties}>
               Headsets for an event, a 360° film, a console for your fleet or a virtual sample house — we&apos;ll help you shape the right mix.
             </p>
-            <div className="btns">
+            <div className="flex flex-wrap justify-center gap-3">
               <Button href={contactHref("Not sure yet")} label="Get a quote" variant="ink" magnetic className="pop" style={{ "--i": 0, "--d": ".55s" } as CSSProperties} />
               <Button href={contactHref("Not sure yet")} label="Discuss your project" variant="line" magnetic className="pop" style={{ "--i": 1, "--d": ".55s" } as CSSProperties} />
               <Button href="/contact" label="Contact us" variant="line" magnetic className="pop" style={{ "--i": 2, "--d": ".55s" } as CSSProperties} />
             </div>
             {site.email && (
-              <p className="fin-mail fade" style={{ "--d": ".85s" } as CSSProperties}>
+              <p className="fade m-0 text-[15px] font-[560] text-[rgba(5,5,5,.72)]" style={{ "--d": ".85s" } as CSSProperties}>
                 {site.email}
               </p>
             )}
@@ -261,3 +264,5 @@ export function FinalCta() {
     </section>
   );
 }
+
+const RING = "pointer-events-none absolute top-1/2 left-1/2 rounded-full border-[1.5px] rm:animate-none!";

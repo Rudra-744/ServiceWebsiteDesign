@@ -33,7 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script dangerouslySetInnerHTML={{ __html: FLAGS }} />
       </head>
       <body>
-        <a className="skip" href="#main">
+        <a className="fixed top-3 left-3 z-200 -translate-y-[200%] rounded-full bg-ink px-4 py-[10px] font-semibold text-white focus:translate-y-0" href="#main">
           Skip to content
         </a>
         <IconSprite />

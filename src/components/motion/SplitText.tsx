@@ -59,7 +59,7 @@ export function SplitText({ as: Tag = "span", text, lines, className, style, man
   const full = all.map((l) => l.text).join(" ");
   return (
     <Tag
-      className={className}
+      className={[bare ? "split" : "split split-rise", className].filter(Boolean).join(" ")}
       style={style}
       data-split={bare ? undefined : ""}
       data-manual={manual ? "" : undefined}

@@ -216,23 +216,27 @@ export function Preloader() {
 
   if (gone) return null;
   return (
-    <div className="pre" aria-hidden="true" ref={ref}>
-      <div className="rl">
-        <div className="rl-top">
-          <span className="pre-logo">
-            <LogoMark />
+    <div
+      ref={ref}
+      aria-hidden="true"
+      className="pre group/pre pointer-events-none fixed inset-0 z-90 bg-paper text-ink [transition:background-color_.7s_var(--e-out)] [&.open]:bg-[rgba(255,255,255,0)] [html:not(.preloading)_&:not(.go)]:hidden"
+    >
+      <div className="absolute inset-0 flex flex-col justify-between px-(--pad) pt-[calc(var(--pad)+4px)] pb-[clamp(18px,3.4vh,36px)]">
+        <div className="flex animate-[psIn_.9s_var(--e-out)_both] items-center justify-between gap-5 [transition:opacity_.45s,transform_.7s_var(--e-io)] group-[.go]/pre:opacity-0 group-[.go]/pre:[transform:translateY(-14px)]">
+          <span className="flex items-center gap-[10px] text-[19px] font-[720] tracking-[-0.02em] [font-stretch:118%]">
+            <LogoMark className="size-[30px]" />
             Cyphon
           </span>
-          <span className="rl-tag">{site.tagline}</span>
+          <span className="text-[15px] text-stone max-[641px]:hidden">{site.tagline}</span>
         </div>
-        <div className="rl-bot">
-          <div className="rl-name">
-            <span className="rl-ns" />
+        <div className="flex animate-[psIn_.9s_var(--e-out)_.08s_both] items-end justify-between gap-5 [transition:opacity_.45s,transform_.7s_var(--e-io)] group-[.go]/pre:opacity-0 group-[.go]/pre:[transform:translateY(14px)]">
+          <div className="mb-[.1em] h-[1.15em] overflow-hidden text-[length:clamp(24px,3vw,46px)] leading-[1.15] font-[640] tracking-[-0.03em] [font-stretch:112%] max-[641px]:text-[length:clamp(18px,5vw,24px)]">
+            <span className="rl-ns block [transition:transform_.55s_var(--e-out)] [&_b]:block [&_b]:h-[1.15em] [&_b]:[font-weight:inherit] [&_b]:whitespace-nowrap" />
           </div>
-          <div className="pre-num num">
-            {[0, 1, 2].map((c) => (
-              <span className="od" key={c}>
-                <span className="od-s">
+          <div className="-mb-[.06em] flex text-[length:clamp(88px,15vw,230px)] leading-none font-[640] tracking-[-0.05em] tabular-nums [font-stretch:112%] max-[641px]:text-[length:clamp(80px,23vw,130px)]">
+            {OD_COL.map((col, c) => (
+              <span className={`od block h-[1em] overflow-hidden [transition:transform_.7s_var(--e-io),opacity_.4s] [&.z]:opacity-[.22] group-[.go]/pre:[transform:translateY(-105%)] group-[.go]/pre:opacity-0! ${col}`} key={c}>
+                <span className="od-s block will-change-transform [&_span]:block [&_span]:h-[1em] [&_span]:text-center">
                   {DIGITS.map((d, i) => (
                     <span key={i}>{d}</span>
                   ))}
@@ -242,9 +246,17 @@ export function Preloader() {
           </div>
         </div>
       </div>
-      <div className="rl-frame">
-        <div className="rl-slides" />
+      <div className="rl-frame fixed top-[46%] left-1/2 z-2 aspect-[4/5] w-[clamp(200px,19vw,300px)] animate-[rlIn_1s_var(--e-out)_both] overflow-hidden rounded-[18px] bg-card [transform:translate(-50%,-50%)] max-[641px]:top-[44%] max-[641px]:w-[56vw] [&.free]:animate-none [&.free]:[transform:none]">
+        {/* JS adds the slides (.rl-s [.card|.dest], then .on) */}
+        <div className="rl-slides absolute inset-0 [&_.rl-s]:absolute [&_.rl-s]:inset-0 [&_.rl-s]:overflow-hidden [&_.rl-s]:bg-card [&_.rl-s]:[clip-path:inset(100%_0_0_0)] [&_.rl-s_img]:absolute [&_.rl-s_img]:inset-0 [&_.rl-s_img]:size-full [&_.rl-s_img]:object-cover [&_.rl-s_img]:[transform:scale(1.18)] [&_.rl-s_img]:[transition:transform_calc(var(--sd,.32s)*1.8)_var(--e-out)] [&_.rl-s.card]:bg-blue [&_.rl-s.card_img]:inset-[12%] [&_.rl-s.card_img]:size-[76%] [&_.rl-s.card_img]:object-contain [&_.rl-s.dest_img]:[transform:none] [&_.rl-s.on]:[clip-path:inset(0_0_0_0)] [&_.rl-s.on]:[transition:clip-path_var(--sd,.32s)_var(--e-out)] [&_.rl-s.on_img]:[transform:none]" />
       </div>
     </div>
   );
 }
+
+// odometer columns roll away 0.05 s apart (reference nth-child delays)
+const OD_COL = [
+  "group-[.go]/pre:[transition:transform_.7s_var(--e-io),opacity_.5s_.2s]",
+  "group-[.go]/pre:[transition:transform_.7s_var(--e-io)_.05s,opacity_.5s_.05s]",
+  "group-[.go]/pre:[transition:transform_.7s_var(--e-io)_.1s,opacity_.5s_.1s]",
+];

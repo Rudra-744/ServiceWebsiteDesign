@@ -31,7 +31,7 @@ export function Cursor() {
     const move = (e: PointerEvent) => {
       pos.current.tx = e.clientX;
       pos.current.ty = e.clientY;
-      c.classList.remove("hidden");
+      c.classList.remove("is-out");
       const t = e.target as Element;
       const m = t.closest?.<HTMLElement>("[data-magnetic]") ?? null;
       if (m !== mag) resetMag();
@@ -58,18 +58,18 @@ export function Cursor() {
       const big = t.closest<HTMLElement>("[data-cursor]");
       const link = t.closest("a,button,input,textarea,select,label");
       if (link && !(big && link === big)) {
-        c.classList.remove("big");
-        c.classList.add("link");
+        c.classList.remove("is-big");
+        c.classList.add("is-link");
         return;
       }
-      c.classList.remove("link");
+      c.classList.remove("is-link");
       if (big) {
         lbl.textContent = big.dataset.cursor!;
-        c.classList.add("big");
-      } else c.classList.remove("big");
+        c.classList.add("is-big");
+      } else c.classList.remove("is-big");
     };
     const leave = () => {
-      c.classList.add("hidden");
+      c.classList.add("is-out");
       resetMag();
       resetTilt();
     };
@@ -92,9 +92,9 @@ export function Cursor() {
   });
 
   return (
-    <div className="cursor" aria-hidden="true" ref={ref}>
-      <i>
-        <b />
+    <div className="cursor group/cur pointer-events-none fixed top-0 left-0 z-100 hidden fine-motion:block" aria-hidden="true" ref={ref}>
+      <i className="absolute -top-[6px] -left-[6px] grid size-3 place-items-center rounded-full bg-ink [transition:width_.5s_var(--e-out),height_.5s_var(--e-out),left_.5s_var(--e-out),top_.5s_var(--e-out),background-color_.3s,opacity_.3s] group-[.is-link]/cur:-top-5 group-[.is-link]/cur:-left-5 group-[.is-link]/cur:size-10 group-[.is-link]/cur:bg-transparent group-[.is-link]/cur:shadow-[inset_0_0_0_1.5px_var(--color-ink)] group-[.is-big]/cur:-top-[44px] group-[.is-big]/cur:-left-[44px] group-[.is-big]/cur:size-[88px] group-[.is-big]/cur:bg-blue! group-[.is-big]/cur:shadow-none group-[.is-out]/cur:opacity-0">
+        <b className="text-[12.5px] font-semibold text-ink opacity-0 transition-opacity duration-300 [font-stretch:104%] group-[.is-big]/cur:opacity-100" />
       </i>
     </div>
   );

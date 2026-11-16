@@ -52,12 +52,16 @@ export function IconSprite() {
   );
 }
 
+/** logo link layout (nav, footer) */
+export const LOGO_MARK = "size-[30px] overflow-visible [transition:rotate_.9s_var(--e-out)] group-hover/logo:-rotate-360";
+export const LOGO = "logo group/logo flex items-center gap-[10px] text-[19px] font-[720] tracking-[-0.02em] [font-stretch:118%]";
+
 /** Cyphon logo mark (cornflower circle + ink "C" arc) */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
       <circle cx="16" cy="16" r="16" fill="#548CFF" />
-      <path d="M21.2 11.6a6.6 6.6 0 1 0 0 8.8" fill="none" stroke="#050505" strokeWidth={3} strokeLinecap="round" />
+      <path d="M21.2 11.6a6.6 6.6 0 1 0 0 8.8" fill="none" stroke="#050505" strokeWidth={3} strokeLinecap="round" style={{ transformBox: "view-box", transformOrigin: "50% 50%" }} />
     </svg>
   );
 }

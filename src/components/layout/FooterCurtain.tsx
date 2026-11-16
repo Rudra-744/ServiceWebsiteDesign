@@ -15,10 +15,10 @@ export function FooterCurtain({ children }: { children: ReactNode }) {
     () =>
       addMeasure(() => {
         const foot = ref.current!, main = document.getElementById("main")!;
-        foot.classList.remove("static");
+        foot.classList.remove("is-static");
         h.current = foot.offsetHeight;
         if (h.current > innerHeight * 0.92) {
-          foot.classList.add("static");
+          foot.classList.add("is-static");
           main.style.marginBottom = "0px";
         } else main.style.marginBottom = h.current + "px";
       }),
@@ -32,7 +32,7 @@ export function FooterCurtain({ children }: { children: ReactNode }) {
   });
 
   return (
-    <footer className="foot" ref={ref}>
+    <footer ref={ref} className="foot group/foot fixed inset-x-0 bottom-0 z-1 bg-ink px-(--pad) pt-[clamp(48px,6vw,88px)] pb-6 text-[#f2f2f4] [&.is-static]:relative">
       {children}
     </footer>
   );

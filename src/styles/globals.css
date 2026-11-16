@@ -1,198 +1,228 @@
 @import "tailwindcss";
-@import "./chrome.css";
-@import "./pages.css";
-@import "./home.css";
-@import "./tour.css";
 
 /* =========================================================
-   CYPHON design tokens (PROJECT-BRIEF 4.1). Flat colour only: no gradients, glows or glass.
-   Text on cornflower is always ink (6.4:1). Dark only in the footer and small accents.
-   Component CSS is ported 1:1 from the reference site.css (THEME overrides folded into the final values).
+   CYPHON — Tailwind v4 foundation.
+   Components are styled with utilities in the JSX. This file holds only what utilities cannot carry:
+   tokens, engine-state variants, keyframes, base styles and the shared reveal primitives that the motion
+   engine toggles (`.in`). Values are the reference site.css values (THEME overrides folded in).
+   Breakpoints follow the reference exactly: CSS `max-width: Xpx` = Tailwind `max-[X+1px]:`.
    ========================================================= */
+
+/* ---------- engine state variants ---------- */
+@custom-variant motion (.motion &);               /* reduced motion off: hidden "before" states apply */
+@custom-variant rm (.rm &);                       /* reduced motion on */
+@custom-variant fine (.fine &);                   /* mouse + hover device */
+@custom-variant fine-motion (.fine.motion &);     /* mouse device, reduced motion off */
+@custom-variant menu-open (.menu-open &);
+@custom-variant menu-ready (.menu-ready &);
+@custom-variant preloading (.preloading &);
+/* menu without the preview card: narrow screens or touch devices */
+@custom-variant m-touch {
+  @media (max-width: 999px), (hover: none) {
+    @slot;
+  }
+}
+/* revealed: the element or an ancestor got `.in` (only meaningful with motion; outranks `motion:`) */
+@custom-variant in (.motion &:is(.in, .in *));
+
+/* ---------- tokens ---------- */
+@theme {
+  --color-paper: #ffffff;
+  --color-card: #f5f5f7;
+  --color-render: #f8f7f6;
+  --color-ink: #050505;
+  --color-blue: #548cff;
+  --color-blue-2: #3e77f0;
+  --color-blue-deep: #2f64d9;
+  --color-blue-soft: #e4ecff;
+  --color-sky: #8db3ff;
+  --color-stone: #4a4a50;
+  --color-muted: #6b6b72;
+  --color-line: #eaeaec;
+  --color-ok: #1fa855;
+  --color-warn: #d99a00;
+
+  --font-sans: var(--font-archivo), "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius-stage: 36px;
+  --radius-card: 24px;
+  --radius-m: 14px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 :root {
-  --paper: #ffffff;
-  --card: #f5f5f7;
-  --render: #f8f7f6;
-  --ink: #050505;
-  --blue: #548cff;
-  --blue-2: #3e77f0;
-  --blue-deep: #2f64d9;
-  --blue-soft: #e4ecff;
-  --sky: #8db3ff;
-  --stone: #4a4a50;
-  --muted2: #6b6b72;
-  --line: #eaeaec;
-  --ok: #1fa855;
-  --warn: #d99a00;
-
-  --bg: var(--paper);
-  --fg: var(--ink);
-  --surface: var(--card);
-  --muted: var(--stone);
-  --rule: var(--line);
-
-  --r-xl: 36px;
-  --r-l: 24px;
-  --r-m: 14px;
   --pad: clamp(20px, 4.4vw, 72px);
   --nav-h: 60px;
   --e-out: cubic-bezier(0.16, 1, 0.3, 1);
   --e-io: cubic-bezier(0.76, 0, 0.24, 1);
   --e-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --f: var(--font-archivo), "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f: var(--font-sans);
 }
 
-@theme inline {
-  --color-paper: var(--paper);
-  --color-card: var(--card);
-  --color-ink: var(--ink);
-  --color-blue: var(--blue);
-  --color-blue-deep: var(--blue-deep);
-  --color-blue-soft: var(--blue-soft);
-  --color-stone: var(--stone);
-  --color-muted: var(--muted2);
-  --color-line: var(--line);
-  --font-sans: var(--f);
-  --radius-xl: var(--r-xl);
-  --radius-l: var(--r-l);
-  --radius-m: var(--r-m);
-  --ease-out: var(--e-out);
-  --ease-io: var(--e-io);
-  --ease-spring: var(--e-spring);
-  --breakpoint-sm: 520px;
-  --breakpoint-md: 820px;
-  --breakpoint-lg: 960px;
-  --breakpoint-xl: 1100px;
+/* animated tile colour (VR HUB teaser): registered so it can transition */
+@property --tb {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f5f5f7;
 }
 
 /* ---------- base ---------- */
-html {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.55;
+    font-stretch: 100%;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+  ::selection {
+    background: var(--color-blue);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-blue-deep);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  main {
+    position: relative;
+    z-index: 2;
+    background: var(--color-paper);
+    overflow-x: clip;
+  }
+  .rm * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: var(--f);
-  font-size: 17px;
-  line-height: 1.55;
-  font-stretch: 100%;
-  font-weight: 400;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+
+/* ---------- keyframes (used through animate-[name_…] utilities) ---------- */
+@keyframes nowPing { 0% { box-shadow: 0 0 0 0 rgba(84, 140, 255, 0.6); } 70%, 100% { box-shadow: 0 0 0 7px rgba(84, 140, 255, 0); } }
+@keyframes mRing { to { rotate: 360deg; } }
+@keyframes pvWave { 0%, 100% { opacity: 0.18; } 45% { opacity: 1; } }
+@keyframes pvFloat { 0%, 100% { translate: 0 0; rotate: -2deg; } 50% { translate: 0 -12px; rotate: 1.5deg; } }
+@keyframes pvPan { to { transform: translateX(-50%); } }
+@keyframes pvTile { 0%, 8%, 88%, 100% { background: var(--color-card); } 18%, 74% { background: var(--color-blue-soft); } }
+@keyframes pvWin { 0%, 8%, 88%, 100% { background: #fff; } 18%, 74% { background: var(--color-blue); } }
+@keyframes pvBar { 0% { transform: scaleX(0); } 70%, 100% { transform: scaleX(1); } }
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes psIn { from { opacity: 0; transform: translateY(14px); } }
+@keyframes rlIn { from { opacity: 0; transform: translate(-50%, -44%) scale(0.92); } }
+@keyframes hint { 0% { transform: translateY(-100%); } 100% { transform: translateY(260%); } }
+@keyframes q3Float { 50% { transform: translateY(-7px) rotate(-0.6deg); } }
+@keyframes orbDash { to { stroke-dashoffset: -240; } }
+@keyframes rhBob { 0%, 100% { transform: none; } 50% { transform: translate3d(0, -10px, 0) rotate(-1.2deg); } }
+@keyframes rhShadow { 0%, 100% { transform: translateX(-50%); } 50% { transform: translateX(-50%) scale(0.86); opacity: 0.7; } }
+@keyframes rhPing { from { transform: scale(0.4); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes mini { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+@keyframes hotPulse { 0% { transform: scale(0.6); opacity: 0.7; } 100% { transform: scale(1.5); opacity: 0; } }
+@keyframes hcWave { 0% { opacity: 0.32; transform: translate(-50%, -50%) scale(0); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1); } }
+@keyframes rpPop { 0% { transform: scale(0.2); } 60% { transform: scale(1.3); } 100% { transform: none; } }
+@keyframes rpTick { from { transform: translate3d(0, 45%, 0); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes fpFlow { to { stroke-dashoffset: -24; } }
+@keyframes ehOut { to { transform: translateY(-110%); } }
+@keyframes ehIn { from { transform: translateY(110%); } to { transform: none; } }
+@keyframes eoBar { to { transform: scaleX(1); } }
+@keyframes ebBump { from { transform: scale(0.92); opacity: 0.5; } }
+@keyframes logIn { from { opacity: 0; transform: translateY(8px); } }
+@keyframes prog { to { transform: scaleX(1); } }
+@keyframes ring { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(16deg); } 40% { transform: rotate(-14deg); } 60% { transform: rotate(9deg); } 80% { transform: rotate(-5deg); } }
+
+/* ---------- shared primitives toggled by the motion engine (ANIMATION-SPEC G2, G3) ---------- */
+/* words of split text: mask that keeps descenders */
+@utility split {
+  & .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 0.03em 0.11em; margin: 0 -0.03em -0.11em; white-space: nowrap; }
 }
-img,
-svg {
-  display: block;
-  max-width: 100%;
+/* split headline letters rise from the mask when the element gets .in; .out/.quick for runtime swaps */
+@utility split-rise {
+  .motion & .c { display: inline-block; transform: translate3d(0, 108%, 0); transition: transform 1.05s var(--e-out); transition-delay: calc(var(--d, 0s) + var(--i) * 16ms); }
+  .motion &.in .c { transform: none; }
+  .motion &.out .c { transform: translate3d(0, -108%, 0); transition: transform 0.34s cubic-bezier(0.55, 0, 0.8, 0.2) calc(var(--i) * 5ms); }
+  .motion &.quick .c { transition-duration: 0.8s; transition-delay: calc(var(--i) * 10ms); }
 }
-a {
-  color: inherit;
-  text-decoration: none;
+@utility rv {
+  .motion & { opacity: 0; transform: translate3d(0, 28px, 0); transition: opacity 1s var(--e-out), transform 1.2s var(--e-out); transition-delay: var(--d, 0s); }
+  .motion &:is(.in, .in *) { opacity: 1; transform: none; }
 }
-button,
-input,
-select,
-textarea {
-  font: inherit;
-  color: inherit;
+@utility fade {
+  .motion & { opacity: 0; transition: opacity 1.2s var(--e-out); transition-delay: var(--d, 0.15s); }
+  .motion &:is(.in, .in *) { opacity: 1; }
 }
-button {
-  background: none;
-  border: 0;
-  cursor: pointer;
-  padding: 0;
+@utility pop {
+  .motion & { opacity: 0; transform: translate3d(0, 24px, 0) scale(0.82); transition: opacity 0.45s var(--e-out), transform 0.8s var(--e-spring); transition-delay: calc(var(--d, 0s) + var(--i, 0) * 65ms); }
+  .motion &:is(.in, .in *) { opacity: 1; transform: none; }
 }
-::selection {
-  background: var(--blue);
-  color: var(--ink);
+@utility clip {
+  .motion & { clip-path: inset(100% 0 0 0); transition: clip-path 1.35s var(--e-io); transition-delay: var(--d, 0s); }
+  .motion & img { transform: scale(1.25); transition: transform 1.8s var(--e-out); transition-delay: var(--d, 0s); }
+  .motion &.in { clip-path: inset(0 0 0 0 round 0); }
+  .motion &.in img { transform: none; }
 }
-:focus-visible {
-  outline: 2px solid var(--blue-deep);
-  outline-offset: 3px;
-  border-radius: 8px;
-}
-[hidden] {
-  display: none !important;
-}
-.sr,
-.sr-only {
-  position: absolute;
-  width: 1px;
+@utility clip-l { .motion &:not(.in) { clip-path: inset(0 100% 0 0); } }
+@utility clip-r { .motion &:not(.in) { clip-path: inset(0 0 0 100%); } }
+@utility clip-t { .motion &:not(.in) { clip-path: inset(0 0 100% 0); } }
+@utility clip-c { .motion &:not(.in) { clip-path: inset(50% 50% 50% 50% round 24px); } }
+/* 1px rule that draws from the left */
+@utility rule {
   height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
+  background: var(--color-line);
+  transform-origin: left;
+  .motion & { transform: scaleX(0); transition: transform 1.4s var(--e-out); transition-delay: var(--d, 0s); }
+  .motion &:is(.in, .in *) { transform: none; }
 }
-.skip {
-  position: fixed;
-  left: 12px;
-  top: 12px;
-  z-index: 200;
-  padding: 10px 16px;
-  border-radius: 999px;
-  background: var(--ink);
-  color: #fff;
+
+/* page morph / loader landing: the target element is shown in its finished state (added by JS to any element) */
+@utility morph-hit { clip-path: none !important; transition: none !important; }
+@utility morph-land {
+  clip-path: none !important;
+  transition: none !important;
+  animation-play-state: paused;
+  & * { transition: none !important; animation-play-state: paused; }
+}
+
+/* ---------- type scale (reused everywhere) ---------- */
+@utility d1 { font-size: clamp(44px, 7.4vw, 134px); line-height: 0.92; letter-spacing: -0.04em; font-weight: 640; font-stretch: 118%; margin: 0; }
+@utility d2 { font-size: clamp(36px, 5.4vw, 92px); line-height: 0.95; letter-spacing: -0.035em; font-weight: 620; font-stretch: 114%; margin: 0; }
+@utility d3 { font-size: clamp(26px, 2.9vw, 46px); line-height: 1.02; letter-spacing: -0.025em; font-weight: 600; font-stretch: 108%; margin: 0; }
+@utility d4 { font-size: clamp(20px, 1.7vw, 26px); line-height: 1.15; letter-spacing: -0.015em; font-weight: 600; font-stretch: 104%; margin: 0; }
+@utility lede { font-size: clamp(18px, 1.45vw, 22px); line-height: 1.45; color: var(--color-stone); max-width: 34em; margin: 0; }
+@utility body-copy { color: var(--color-stone); max-width: 36em; margin: 0; }
+@utility tag { font-size: 14px; font-weight: 560; font-stretch: 96%; color: var(--color-muted); margin: 0; }
+
+/* text link with an underline that grows on hover (used across every page) */
+@utility link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 600;
-  transform: translateY(-200%);
+  font-stretch: 106%;
+  &::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1.5px; background: currentColor; transform: scaleX(0.25); transform-origin: left; transition: transform 0.6s var(--e-out); }
+  &:hover::after { transform: scaleX(1); }
 }
-.skip:focus {
-  transform: none;
-}
 
-/* ---------- type ---------- */
-.d1 { font-size: clamp(44px, 7.4vw, 134px); line-height: 0.92; letter-spacing: -0.04em; font-weight: 640; font-stretch: 118%; margin: 0; }
-.d2 { font-size: clamp(36px, 5.4vw, 92px); line-height: 0.95; letter-spacing: -0.035em; font-weight: 620; font-stretch: 114%; margin: 0; }
-.d3 { font-size: clamp(26px, 2.9vw, 46px); line-height: 1.02; letter-spacing: -0.025em; font-weight: 600; font-stretch: 108%; margin: 0; }
-.d4 { font-size: clamp(20px, 1.7vw, 26px); line-height: 1.15; letter-spacing: -0.015em; font-weight: 600; font-stretch: 104%; margin: 0; }
-.lede { font-size: clamp(18px, 1.45vw, 22px); line-height: 1.45; color: var(--muted); max-width: 34em; margin: 0; }
-.body { color: var(--muted); max-width: 36em; margin: 0; }
-.tag { font-size: 14px; font-weight: 560; font-stretch: 96%; color: var(--muted2); margin: 0; }
-.num { font-variant-numeric: tabular-nums; }
-
-/* ---------- layout ---------- */
-.wrap { padding-inline: var(--pad); }
-.sec { padding-block: clamp(96px, 13vw, 200px); }
-.sec-tight { padding-block: clamp(72px, 9vw, 140px); }
-.head { display: grid; gap: 22px; margin-bottom: clamp(40px, 6vw, 88px); }
-@media (min-width: 960px) {
-  .head.split { grid-template-columns: 1.25fr 1fr; align-items: end; gap: 6vw; }
-}
-main { position: relative; z-index: 2; background: var(--bg); overflow-x: clip; }
-
-/* ---------- motion primitives (hidden "before" states only under html.motion) ---------- */
-.w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 0.03em 0.11em; margin: 0 -0.03em -0.11em; white-space: nowrap; }
-.motion [data-split] .c { display: inline-block; transform: translate3d(0, 108%, 0); transition: transform 1.05s var(--e-out); transition-delay: calc(var(--d, 0s) + var(--i) * 16ms); }
-.motion [data-split].in .c { transform: none; }
-.motion [data-split].out .c { transform: translate3d(0, -108%, 0); transition: transform 0.34s cubic-bezier(0.55, 0, 0.8, 0.2) calc(var(--i) * 5ms); }
-.motion [data-split].quick .c { transition-duration: 0.8s; transition-delay: calc(var(--i) * 10ms); }
-.motion .rv { opacity: 0; transform: translate3d(0, 28px, 0); transition: opacity 1s var(--e-out), transform 1.2s var(--e-out); transition-delay: var(--d, 0s); }
-.motion .in .rv, .motion .rv.in { opacity: 1; transform: none; }
-.motion .fade { opacity: 0; transition: opacity 1.2s var(--e-out); transition-delay: var(--d, 0.15s); }
-.motion .in .fade, .motion .fade.in { opacity: 1; }
-.motion .pop { opacity: 0; transform: translate3d(0, 24px, 0) scale(0.82); transition: opacity 0.45s var(--e-out), transform 0.8s var(--e-spring); transition-delay: calc(var(--d, 0s) + var(--i, 0) * 65ms); }
-.motion .in .pop, .motion .pop.in { opacity: 1; transform: none; }
-.motion .clip { clip-path: inset(100% 0 0 0); transition: clip-path 1.35s var(--e-io); transition-delay: var(--d, 0s); }
-.motion .clip img, .motion .clip .clip-in { transform: scale(1.25); transition: transform 1.8s var(--e-out); transition-delay: var(--d, 0s); }
-.motion .clip.in { clip-path: inset(0 0 0 0); }
-.motion .clip.in img, .motion .clip.in .clip-in { transform: none; }
-.motion .clip.from-l { clip-path: inset(0 100% 0 0); }
-.motion .clip.from-r { clip-path: inset(0 0 0 100%); }
-.motion .clip.from-t { clip-path: inset(0 0 100% 0); }
-.motion .clip.from-c { clip-path: inset(50% 50% 50% 50% round 24px); }
-.motion .clip.in.from-l, .motion .clip.in.from-r, .motion .clip.in.from-t, .motion .clip.in.from-c { clip-path: inset(0 0 0 0 round 0); }
-.rule { height: 1px; background: var(--rule); transform-origin: left; }
-.motion .rule { transform: scaleX(0); transition: transform 1.4s var(--e-out); transition-delay: var(--d, 0s); }
-.motion .in .rule, .motion .rule.in { transform: none; }
-
-/* chips */
-.chips { display: flex; flex-wrap: wrap; gap: 10px; }
-.chip { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 999px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); font-weight: 540; font-size: 15.5px; font-stretch: 102%; }
-.chip svg { width: 18px; height: 18px; flex: none; }
-
-/* reduced motion */
-.rm * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+/* ---------- layout spacing ---------- */
+@utility wrap { padding-inline: var(--pad); }
+@utility sec { padding-block: clamp(96px, 13vw, 200px); }
+@utility sec-tight { padding-block: clamp(72px, 9vw, 140px); }

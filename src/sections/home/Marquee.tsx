@@ -43,13 +43,13 @@ export function Marquee() {
   });
 
   return (
-    <div className="marquee" aria-hidden="true" ref={root}>
-      <div className="mq-track">
-        <span className="mq-item">
+    <div className="overflow-hidden border-y border-line py-[clamp(18px,2.4vw,32px)] whitespace-nowrap" aria-hidden="true" ref={root}>
+      <div className="mq-track inline-flex will-change-transform">
+        <span className="inline-flex items-center gap-[clamp(18px,2.6vw,40px)] pr-[clamp(18px,2.6vw,40px)] text-[length:clamp(34px,5.6vw,96px)] leading-none font-[620] tracking-[-0.035em] [font-stretch:120%]">
           {MARQUEE.map(([t, o]) => (
             <span key={t} style={{ display: "contents" }}>
-              <span className={o || undefined}>{t}</span>
-              <i className="mq-dot" />
+              <span className={o ? "text-transparent [-webkit-text-stroke:1.4px_var(--color-ink)]" : undefined}>{t}</span>
+              <i className="size-[.32em] flex-none rounded-full bg-blue" />
             </span>
           ))}
         </span>

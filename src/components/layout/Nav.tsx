@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
-import { LogoMark } from "./IconSprite";
+import { LOGO, LOGO_MARK, LogoMark } from "./IconSprite";
 import { addMeasure, engine, maxY, onEngine } from "@/lib/engine";
 import { setMenu } from "@/lib/menu";
 import { clamp } from "@/lib/motion";
@@ -91,25 +91,37 @@ export function Nav() {
   });
 
   return (
-    <header className="nav" ref={navRef}>
-      <Link href="/" className="logo" aria-label="Cyphon home">
-        <LogoMark />
+    <header
+      ref={navRef}
+      className="nav fixed top-3 right-3 left-3 z-60 flex h-(--nav-h) items-center justify-between rounded-full bg-white pr-2 pl-4 shadow-[0_0_0_1px_var(--color-line)] [transition:transform_.7s_var(--e-out),left_.9s_var(--e-io),right_.9s_var(--e-io),box-shadow_.6s] preloading:[transform:translateY(calc(-100%_-_20px))] [&.hide]:[transform:translateY(calc(-100%_-_20px))] min-[900px]:[&.compact]:right-[max(12px,calc(50%_-_390px))] min-[900px]:[&.compact]:left-[max(12px,calc(50%_-_390px))]"
+    >
+      <Link href="/" className={LOGO} aria-label="Cyphon home">
+        <LogoMark className={LOGO_MARK} />
         Cyphon
       </Link>
-      <span className="nav-now" aria-hidden="true">
-        <span className="nn-box">
+      <span
+        className="nav-now pointer-events-none absolute top-1/2 left-1/2 flex h-8 -translate-x-1/2 -translate-y-1/2 items-center gap-[9px] rounded-full bg-card pr-[14px] pl-3 text-[13.5px] font-[560] tracking-[-0.005em] text-ink [font-stretch:108%] before:size-[7px] before:flex-none before:animate-[nowPing_2.4s_var(--e-out)_infinite] before:rounded-full before:bg-blue before:content-[''] max-[900px]:right-[60px] max-[900px]:left-auto max-[900px]:translate-x-0 min-[521px]:max-[900px]:right-[196px] max-[360px]:hidden"
+        aria-hidden="true"
+      >
+        {/* JS rewrites the two spans' className (nn / on / out / reset), so they are styled from here */}
+        <span className="nn-box relative block h-[1.3em] overflow-hidden [transition:width_.6s_var(--e-out)] [&_.nn]:absolute [&_.nn]:top-0 [&_.nn]:left-0 [&_.nn]:leading-[1.3] [&_.nn]:[font-weight:inherit] [&_.nn]:whitespace-nowrap [&_.nn_i]:inline-block [&_.nn_i]:whitespace-pre [&_.nn_i]:not-italic [&_.nn_i]:[transform:translateY(110%)] [&_.nn_i]:[transition:transform_.6s_var(--e-out)_calc(var(--ci)*16ms)] [&_.nn.on_i]:[transform:none] [&_.nn.out_i]:[transform:translateY(-110%)] [&_.nn.reset_i]:transition-none rm:[&_.nn_i]:duration-[.01ms] rm:[&_.nn_i]:delay-0">
           <b className="nn on" />
           <b className="nn" />
         </span>
       </span>
-      <div className="nav-r">
-        <Button href={contactHref("Not sure yet")} label="Get a quote" variant="blue" size="sm" className="btn-quote" />
-        <button className="burger" aria-label="Open menu" aria-expanded="false" onClick={() => setMenu(!engine.menuOpen)}>
-          <svg className="b-ring" viewBox="0 0 44 44" aria-hidden="true">
-            <circle cx="22" cy="22" r="21" />
+      <div className="flex items-center gap-2">
+        <Button href={contactHref("Not sure yet")} label="Get a quote" variant="blue" size="sm" className="btn-quote max-[521px]:hidden" />
+        <button
+          className="burger group/bg relative isolate grid size-11 place-items-center overflow-hidden rounded-full shadow-[inset_0_0_0_1px_var(--color-line)] before:absolute before:inset-0 before:-z-10 before:scale-0 before:rounded-full before:bg-blue before:[transition:scale_.5s_var(--e-out)] before:content-[''] hover:before:scale-100"
+          aria-label="Open menu"
+          aria-expanded="false"
+          onClick={() => setMenu(!engine.menuOpen)}
+        >
+          <svg className="b-ring pointer-events-none absolute inset-0 size-full -rotate-90" viewBox="0 0 44 44" aria-hidden="true">
+            <circle cx="22" cy="22" r="21" className="fill-none stroke-blue [stroke-dasharray:132] [stroke-dashoffset:132] [stroke-linecap:round] [stroke-width:2.2]" />
           </svg>
-          <i />
-          <i />
+          <i className="absolute right-[14px] left-[14px] h-[1.6px] bg-current [transform:translateY(-4px)] [transition:transform_.6s_var(--e-out),left_.5s_var(--e-out)] menu-open:[transform:rotate(45deg)]" />
+          <i className="absolute right-[14px] left-[21px] h-[1.6px] bg-current [transform:translateY(4px)] [transition:transform_.6s_var(--e-out),left_.5s_var(--e-out)] group-hover/bg:left-[14px] menu-open:left-[14px] menu-open:[transform:rotate(-45deg)]" />
         </button>
       </div>
     </header>

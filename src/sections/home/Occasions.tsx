@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { engine } from "@/lib/engine";
 import { useScrollScene } from "@/hooks/useScrollScene";
 import { OCCASIONS } from "@/content/home";
+import { HEAD_SPLIT } from "@/components/ui/layout";
 
 // Occasions (ANIMATION-SPEC H7): the row nearest 0.45×vh is active (current row gets a 24px advantage),
 // mouse hover overrides; the sticky cornflower card swaps after 200 ms.
@@ -70,45 +71,39 @@ export function Occasions() {
 
   const o0 = OCCASIONS[0];
   return (
-    <section data-nav="Occasions" className="sec wrap alt" aria-label="Occasions">
-      <div className="head split">
+    <section data-nav="Occasions" className="sec wrap bg-card" aria-label="Occasions">
+      <div className={HEAD_SPLIT}>
         <SplitText as="h2" className="d2" text="Where we show up." />
         <p className="lede fade" data-reveal="">
           From expo floors to wedding lawns, we bring the headsets, the content and the people to run them.
         </p>
       </div>
-      <div className="occ-grid">
-        <ul className="occ-list" ref={list}>
+      <div className="occ-grid grid gap-10 min-[960px]:grid-cols-[1.5fr_1fr] min-[960px]:gap-[5vw]">
+        <ul className="occ-list m-0 list-none p-0" ref={list}>
           {OCCASIONS.map(([, , name, desc]) => (
-            <li className="occ-row" data-reveal="" key={name}>
-              <span className="rule" />
-              <span className="occ-name">
-                <i />
+            <li className="occ-row group/or relative cursor-default py-[clamp(14px,1.6vw,22px)]" data-reveal="" key={name}>
+              <span className="rule absolute inset-x-0 top-0" />
+              <span className="flex items-center gap-[.3em] text-[length:clamp(34px,5vw,84px)] leading-none font-[620] tracking-[-0.035em] text-ink opacity-20 [font-stretch:116%] [transition:opacity_.5s_var(--e-out),transform_.7s_var(--e-out),color_.4s] group-[.on]/or:opacity-100 [@media(hover:hover)_and_(min-width:960px)]:group-[.on]/or:[transform:translateX(.2em)]">
+                <i className="mr-[.08em] size-[.26em] flex-none rounded-full bg-blue [transform:scale(0)] [transition:transform_.5s_var(--e-spring)] group-[.on]/or:[transform:none]" />
                 {name}
               </span>
-              <div className="occ-desc">
-                <div>
-                  <p>{desc}</p>
+              <div className="grid grid-rows-[0fr] [transition:grid-template-rows_.6s_var(--e-out)] group-[.on]/or:grid-rows-[1fr] min-[960px]:hidden">
+                <div className="overflow-hidden">
+                  <p className="m-0 max-w-[34em] pt-3 text-stone">{desc}</p>
                 </div>
               </div>
             </li>
           ))}
         </ul>
-        <aside className="occ-side">
-          <div className="occ-card">
-            <div className="occ-card-txt">
-              <svg className="occ-icon" aria-hidden="true">
+        <aside className="hidden min-[960px]:sticky min-[960px]:top-[calc(50vh-180px)] min-[960px]:block min-[960px]:self-start">
+          <div className="flex min-h-[360px] flex-col justify-between gap-7 rounded-stage bg-blue p-[clamp(28px,3vw,44px)] text-ink">
+            <div className="occ-card-txt [transition:opacity_.35s,transform_.5s_var(--e-out)] [&.swap]:opacity-0 [&.swap]:[transform:translateY(10px)]">
+              <svg className="size-16" aria-hidden="true">
                 <use href={`#${o0[1]}`} />
               </svg>
-              <p className="tag" style={{ marginTop: 22 }}>
-                {o0[0]}
-              </p>
-              <h3 className="d3" style={{ marginTop: 8 }}>
-                {o0[2]}
-              </h3>
-              <p className="occ-d" style={{ marginTop: 12 }}>
-                {o0[3]}
-              </p>
+              <p className="tag mt-[22px] text-[rgba(5,5,5,.62)]!">{o0[0]}</p>
+              <h3 className="d3 mt-2">{o0[2]}</h3>
+              <p className="occ-d mt-3 text-[rgba(5,5,5,.78)]">{o0[3]}</p>
             </div>
             <Button href="/vr-events" label="Plan your VR event" variant="paper" magnetic />
           </div>

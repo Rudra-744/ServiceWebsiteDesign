@@ -50,12 +50,12 @@ export function Services() {
   useStackScene(track, ".svc-panel", ".svc-shade", true);
 
   return (
-    <section data-nav="Services" className="svc" aria-label="Services" ref={sec}>
-      <div className="svc-pin">
-        <div className="svc-track" ref={track}>
-          <div className="svc-intro">
+    <section ref={sec} data-nav="Services" className="svc relative max-[820px]:h-auto!" aria-label="Services">
+      <div className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden max-[820px]:static max-[820px]:block max-[820px]:h-auto max-[820px]:overflow-visible">
+        <div ref={track} className="svc-track flex w-max items-stretch gap-[clamp(16px,1.6vw,26px)] px-(--pad) will-change-transform max-[820px]:w-auto max-[820px]:flex-col max-[820px]:gap-0 max-[820px]:[transform:none]!">
+          <div className="flex w-[min(40vw,560px)] flex-col justify-between py-2 pr-[2vw] max-[820px]:w-auto max-[820px]:p-0 max-[820px]:pb-9">
             <div>
-              <SplitText as="h2" className="d2" text="Five ways to bring people inside." />
+              <SplitText as="h2" className="d2 mb-6" text="Five ways to bring people inside." />
               <p className="lede fade" data-reveal="">
                 Rent the hardware, run the event, film the place, show the home, manage the fleet. Pick one, or let us handle all five.
               </p>
@@ -65,31 +65,47 @@ export function Services() {
             </Link>
           </div>
           {SERVICES.map((s, k) => (
-            <article className={`svc-panel${s.img ? "" : " blue"}`} style={{ "--k": k } as CSSProperties} data-cursor="View" key={s.title}>
-              <div className="svc-media">
+            <article
+              key={s.title}
+              data-cursor="View"
+              style={{ "--k": k } as CSSProperties}
+              className={`svc-panel relative flex h-[min(74vh,700px)] w-[clamp(320px,33vw,520px)] origin-[50%_0] flex-col overflow-hidden rounded-stage max-[820px]:sticky max-[820px]:top-[calc(var(--nav-h)+24px+var(--k)*10px)] max-[820px]:mb-5 max-[820px]:h-[min(74svh,600px)] max-[820px]:w-auto ${s.img ? "bg-card" : "bg-blue text-ink"}`}
+            >
+              <div className={`svc-media relative mx-[10px] mt-[10px] flex-1 overflow-hidden rounded-[calc(var(--radius-stage)-8px)] ${s.img ? "bg-render" : "bg-[#7aa5ff]"}`}>
                 {s.img ? (
-                  <Image src={s.img} alt={s.alt!} fill sizes="(max-width: 819px) 90vw, 40vw" style={s.pos ? { objectPosition: s.pos } : undefined} />
+                  <Image
+                    className="-inset-x-[12%]! -inset-y-[4%]! h-[108%]! w-[124%]! max-w-none object-cover will-change-transform"
+                    src={s.img}
+                    alt={s.alt!}
+                    fill
+                    sizes="(max-width: 819px) 110vw, 42vw"
+                    style={s.pos ? { objectPosition: s.pos } : undefined}
+                  />
                 ) : (
-                  <div className="mini-console">
+                  <div className="absolute inset-0 grid grid-cols-4 content-center gap-2 px-[12%] py-[18%]">
                     {Array.from({ length: 8 }, (_, i) => (
-                      <span key={i} style={{ "--i": i } as CSSProperties} />
+                      <span
+                        key={i}
+                        style={{ "--i": i } as CSSProperties}
+                        className="relative aspect-[1.2] overflow-hidden rounded-[10px] bg-[rgba(255,255,255,.62)] after:absolute after:inset-x-[10%] after:bottom-[14%] after:h-[3px] after:origin-left after:rounded-[2px] after:bg-ink after:[animation:mini_3s_linear_calc(var(--i)*-.37s)_infinite] after:content-['']"
+                      />
                     ))}
                   </div>
                 )}
               </div>
-              <div className="svc-body">
+              <div className="grid gap-[10px] px-[26px] pt-[22px] pb-[26px]">
                 <h3 className="d3">{s.title}</h3>
-                <p className="body">{s.body}</p>
-                <Link className="link" href={s.href}>
+                <p className={`m-0 max-w-[36em] text-[16px] ${s.img ? "text-stone" : "text-[rgba(5,5,5,.75)]"}`}>{s.body}</p>
+                <Link className="link mt-[6px] justify-self-start" href={s.href}>
                   {s.link}
                 </Link>
               </div>
-              <span className="svc-shade" />
+              <span className="svc-shade pointer-events-none absolute inset-0 rounded-[inherit] bg-ink opacity-0" />
             </article>
           ))}
         </div>
-        <div className="svc-bar">
-          <i />
+        <div className="svc-bar relative mx-(--pad) mt-[clamp(22px,3.5vh,40px)] h-[2px] bg-line max-[820px]:hidden">
+          <i className="absolute inset-0 origin-left bg-blue [transform:scaleX(0)]" />
         </div>
       </div>
     </section>
