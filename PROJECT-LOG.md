@@ -175,7 +175,7 @@ Exact values come from `ANIMATION-SPEC.md` and the reference code; when they dis
 
 **Differences from the reference**
 
-- Why rows: in motion mode the `rv`/`fade` reveal transitions replace the 0.4 s colour transition, so the hover text colour changes instantly. The fill wipe is unchanged.
+- None. (Why rows: the hover colour first lost its 0.4 s ease to the `rv`/`fade` reveal transitions in motion mode. Fixed with a `motion:[transition:…,color_.4s]` class that keeps the reveal transitions.)
 
 **Tested** (production build, Playwright, 1440×900 and 390×844)
 

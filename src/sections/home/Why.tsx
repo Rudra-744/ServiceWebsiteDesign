@@ -17,8 +17,8 @@ export function Why() {
             key={t}
           >
             <span className="rule absolute inset-x-0 top-0" />
-            <h3 className="d3 rv transition-colors duration-400 group-hover/why:text-ink">{t}</h3>
-            <p className="fade m-0 text-stone transition-colors duration-400 group-hover/why:text-ink">{d}</p>
+            <h3 className="d3 rv transition-colors duration-400 group-hover/why:text-ink motion:[transition:opacity_1s_var(--e-out)_var(--d,0s),transform_1.2s_var(--e-out)_var(--d,0s),color_.4s]">{t}</h3>
+            <p className="fade m-0 text-stone transition-colors duration-400 group-hover/why:text-ink motion:[transition:opacity_1.2s_var(--e-out)_var(--d,.15s),color_.4s]">{d}</p>
           </li>
         ))}
       </ul>
