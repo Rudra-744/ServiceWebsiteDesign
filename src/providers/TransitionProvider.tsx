@@ -201,6 +201,13 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
       copy.removeAttribute("id");
       copy.style.transform = `translate3d(0,${-scrollY}px,0)`;
       fz.appendChild(copy);
+      // the footer too: fixed under <main> (curtain), or in flow after it when it is taller than the screen
+      const foot = document.querySelector<HTMLElement>(".foot");
+      if (foot) {
+        const fc = foot.cloneNode(true) as HTMLElement;
+        if (foot.classList.contains("static")) fc.style.transform = copy.style.transform;
+        fz.appendChild(fc);
+      }
       document.body.appendChild(fz);
       if (engine.menuOpen) closeMenuInstant();
       holdReveals();

@@ -92,3 +92,14 @@ Exact values come from `ANIMATION-SPEC.md` and the reference code; when they dis
 - Reduced motion: no loader, instant navigation. Simulated 3G: `pre-skip`, no loader.
 
 **Revert**: `git revert` the stage-2 commit.
+
+### Fixes after stage 2 — 2026-11-16
+
+- **Loader skip rule:** now Save-Data and `2g`/`slow-2g` only (3G shows the loader again; client decision). `/2g/` matches both `2g` and `slow-2g`. Verified: 3G → `preloading`, slow-2G → `pre-skip`.
+- **Footer flash on back navigation** (see Known issues, fixed): the back/forward freeze now also clones the footer (fixed curtain under the cloned `<main>`; when the footer is static it gets the same scroll offset). Verified: back from a page scrolled to the bottom shows the footer in the frozen frame.
+
+## Known issues
+
+| # | Issue | Found | Status |
+|---|---|---|---|
+| 1 | Back navigation while scrolled to the bottom showed a white footer area for ~0.6 s (the freeze cloned only `<main>`). | Stage 2 | Fixed 2026-11-16 (footer cloned into the freeze). Re-check in the final audit. |
