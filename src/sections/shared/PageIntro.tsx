@@ -11,7 +11,7 @@ export const P_HERO_ROW = "mt-[clamp(26px,3vw,44px)] grid gap-6 min-[960px]:grid
 
 export function Crumb({ label }: { label: string }) {
   return (
-    <p className="mb-[22px] flex items-center gap-[10px] text-[14px] text-stone [&_a:hover]:text-ink">
+    <p className="mt-[1em] mb-[22px] flex items-center gap-[10px] text-[14px] text-stone [&_a:hover]:text-ink">
       <Link href="/">Home</Link>
       <i className="h-[1.5px] w-[22px] bg-current opacity-50" />
       {label}

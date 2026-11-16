@@ -186,3 +186,35 @@ Exact values come from `ANIMATION-SPEC.md` and the reference code; when they dis
 - Loader and reduced-motion script: no errors. Zero console errors. `tsc`, `lint` and `build` pass.
 
 **Revert**: `git revert` this commit (the deleted CSS files come back with it).
+
+---
+
+## Stage 4 — 2026-11-16: service pages and contact (in progress)
+
+Written directly in Tailwind (see the conventions in the Tailwind conversion entry).
+
+### Shared pieces
+
+- `components/ui/Faq.tsx` (R9): accordion rows that open with `grid-template-rows: 0fr → 1fr` and `aria-expanded`. With `ask`, it uses the sticky side column with a contact link (Rental/Events). Without it, a plain heading (360°/Real estate).
+- `content/faqs.ts`: FAQ copy per page. The single source for the accordions and, in stage 6, the FAQPage JSON-LD.
+- `components/ui/CtaBand.tsx` (R9): the cornflower band. With `quest`, the Quest drifts `(0.5 − p) × 90px`.
+- `components/motion/FillWords.tsx` (R2): the statement whose words fill in (view scene 0.82 → 0.38).
+- `sections/shared/Story.tsx` (R5/E3): the pinned four-step frame (rail, steps, scene cross-fade). Pages draw their own scenes in `onFrame`.
+- `Crumb` now has the reference's `1em` top margin (the reference crumb is a `<p>` with browser margins; Tailwind's preflight removed them). This affects every page intro.
+
+### Rental (R1–R9) — `app/(services)/vr-headset-rental`, `sections/rental/*`
+
+- **R1** hero stage:
+  - Wipe, rings, Quest rise and bob, tag pop-ins, all CSS through the `motion:`/`in:` variants.
+  - Scroll and pointer parallax in a small effect that stops when settled.
+- **R3** planner:
+  - Controlled React state for the count and length, with derived facts.
+  - The 200-cell grid fills imperatively with the reference stagger, 450 ms after it is 25% into view.
+  - Facts replay `rpTick` once the visitor has touched a control.
+  - The CTA carries the note: `/contact?service=Headset+rental&note=We need about N headsets for …`.
+- **R4** reuses `Fleet variant="view"`. **R5** uses `Story` with the four scenes. **R6** stacking plans, **R7** unboxing, **R8** drag rail, **R9** FAQ and band.
+- **Difference from the reference:** the audience cards keep their 0.4 s background ease in motion mode. The reference loses it to `.pop`'s transition, the same case as the Why rows.
+- **Tested** (production build, 1440×900 and 390×844):
+  - Pixel diff against the reference rental page: desktop ≤ 2.1% on every shot. Phone: under 3% after the crumb margin fix.
+  - Interactions: slider 120 plus "A month or more" → 120 cells on, "Long-term bulk rental | 12 | 5 | 720", CTA note correct. FAQ opens. Rail arrow scrolls one card.
+  - Zero console errors.
