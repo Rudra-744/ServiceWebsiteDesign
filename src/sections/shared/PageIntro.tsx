@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { SplitText } from "@/components/motion/SplitText";
 import { Button } from "@/components/ui/Button";
 import { INTRO } from "@/content/pages";
@@ -19,16 +19,18 @@ export function Crumb({ label }: { label: string }) {
   );
 }
 
-export function PageIntro({ page }: { page: RouteKey }) {
+/** `children` = the hero media under the row; it then carries [data-morph-to] instead of the header */
+export function PageIntro({ page, children }: { page: RouteKey; children?: ReactNode }) {
   const it = INTRO[page];
   return (
-    <header data-nav={it.crumb ?? ROUTES[page].title} className={P_HERO} data-morph-to="">
+    <header data-nav={ROUTES[page].title} className={P_HERO} data-morph-to={children ? undefined : ""}>
       {it.crumb && <Crumb label={it.crumb} />}
       <SplitText as="h1" className="d1 max-w-[13ch]" text={it.h1} />
       <div className={P_HERO_ROW} data-reveal="">
         <p className="lede fade">{it.lede}</p>
         <Button href={contactHref(it.cta.service)} label={it.cta.label} variant="blue" magnetic className="fade" style={{ "--d": ".3s" } as CSSProperties} />
       </div>
+      {children}
     </header>
   );
 }

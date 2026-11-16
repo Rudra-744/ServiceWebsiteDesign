@@ -241,3 +241,13 @@ Written directly in Tailwind (see the conventions in the Tailwind conversion ent
     - "Celebrations" → Birthday parties. Picking Weddings shows its three ideas and stops auto-play.
     - Typing "Acme Expo" shows it on both lenses. Wedding + empty input → "Riya & Arjun".
   - Zero console errors.
+
+### 360° video (V1–V3) and Real estate VR (RE1–RE6)
+
+- `PageIntro` takes the hero media as `children`. That media then carries `[data-morph-to]`. The header `data-nav` is now the route title, which matches the reference ("360° video", not the crumb text).
+- **V1** `sections/video/Pano.tsx`: the city strip twice; offset = progress × W × 0.9 + drag (× 1.3); seamless loop; degrees readout. **V2** `Bento.tsx`: 1/2/4-column bento, cells clip in from different sides, icon hover. **V3** statement (`ScrubWords`), FAQ, band without the Quest.
+- **RE1** `sections/realestate/GrowMedia.tsx`: figure scale .9 → 1, radius 56 → 20, image 1.18 → 1.02 with parallax. **RE2** `Tour`, **RE3** `FloorPlan` (shared). **RE4** `Benefits.tsx`: rules and self-drawing ticks. **RE5** `PerfectFor.tsx`: `useStackScene` on all sizes. The titles keep the reference's 0.8 opacity, because the reference `.stack-card p` rule also hits the big title. **RE6** FAQ and band.
+- **Tested:**
+  - Pixel diff against the reference: 360° ≤ 2.3% and Real estate ≤ 2.3% on every shot.
+  - The Walkthrough shots differ by design: the reference draws the WebGL room, which comes in stage 5.
+  - Zero console errors.
