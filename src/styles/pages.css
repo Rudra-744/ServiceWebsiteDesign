@@ -1,0 +1,21 @@
+/* =========================================================
+   Shared page blocks (service-page hero, "Next" link, CTA band). Section-specific CSS is added per stage.
+   ========================================================= */
+.p-hero { padding-top: calc(var(--nav-h) + clamp(72px, 10vw, 150px)); }
+.crumb { display: flex; gap: 10px; align-items: center; margin-bottom: 22px; font-size: 14px; color: var(--muted); }
+.crumb i { width: 22px; height: 1.5px; background: currentColor; opacity: 0.5; }
+.crumb a:hover { color: var(--ink); }
+.p-hero .d1 { max-width: 13ch; }
+.p-hero-row { display: grid; gap: 24px; margin-top: clamp(26px, 3vw, 44px); }
+@media (min-width: 960px) { .p-hero-row { grid-template-columns: 1fr auto; align-items: end; gap: 6vw; } }
+
+.band { border-radius: var(--r-xl); background: var(--blue); color: var(--ink); padding: clamp(36px, 6vw, 96px); display: grid; gap: 28px; }
+@media (min-width: 960px) { .band { grid-template-columns: 1.4fr auto; align-items: end; } }
+.band p { margin: 14px 0 0; color: rgba(5, 5, 5, 0.75); max-width: 30em; }
+
+.next { display: block; padding-block: clamp(64px, 9vw, 140px); border-top: 1px solid var(--rule); }
+.next small { display: block; font-size: 15px; color: var(--muted); margin-bottom: 12px; }
+.next-t { position: relative; display: inline-block; font-size: clamp(44px, 8.6vw, 150px); line-height: 0.92; font-weight: 660; font-stretch: 120%; letter-spacing: -0.045em; color: transparent; -webkit-text-stroke: 1.5px var(--fg); }
+.next-t::after { content: attr(data-t); position: absolute; inset: 0; color: var(--blue); -webkit-text-stroke: 0; clip-path: inset(0 100% 0 0); transition: clip-path 0.9s var(--e-io); }
+.next:hover .next-t::after { clip-path: inset(0 0 0 0); }
+@media (hover: none) { .next-t { color: var(--fg); -webkit-text-stroke: 0; } }
