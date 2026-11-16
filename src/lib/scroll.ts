@@ -27,6 +27,13 @@ export function scrollToY(y: number, instant = false) {
   else window.scrollTo({ top: y, behavior: "smooth" });
 }
 
+/** ignore wheel smoothing while a page morph runs (the reference drops wheel input when `busy`) */
+export function pauseSmooth(on: boolean) {
+  if (!lenis) return;
+  if (on) lenis.stop();
+  else lenis.start();
+}
+
 /** freeze/unfreeze page scrolling (menu, loader) */
 export function lockScroll(on: boolean) {
   document.documentElement.style.overflow = on ? "hidden" : "";

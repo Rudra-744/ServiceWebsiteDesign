@@ -194,3 +194,59 @@
 .motion .foot-word span { transform: translateY(100%); transition: transform 1.1s var(--e-spring); transition-delay: calc(var(--i) * 60ms); }
 .motion .foot.in .foot-word span { transform: none; }
 .foot-base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 22px; padding-top: 18px; border-top: 1px solid #232327; font-size: 14px; color: #8a8a92; }
+
+/* ---------- preloader "Image reel" (G1, reference v24 + v13 odometer) ---------- */
+.pre { position: fixed; inset: 0; z-index: 90; color: var(--ink); pointer-events: none; background: var(--paper); transition: background-color 0.7s var(--e-out); }
+html:not(.preloading) .pre:not(.go) { display: none; }
+.pre.open { background-color: rgba(255, 255, 255, 0); }
+@keyframes psIn { from { opacity: 0; transform: translateY(14px); } }
+.pre-logo { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 720; font-stretch: 118%; letter-spacing: -0.02em; }
+.pre-logo svg { width: 30px; height: 30px; }
+.pre-num { display: flex; font-size: clamp(88px, 15vw, 230px); font-weight: 640; font-stretch: 112%; letter-spacing: -0.05em; line-height: 1; margin-bottom: -0.06em; }
+.od { display: block; height: 1em; overflow: hidden; transition: transform 0.7s var(--e-io), opacity 0.4s; }
+.od-s { display: block; will-change: transform; }
+.od-s span { display: block; height: 1em; text-align: center; }
+.od.z { opacity: 0.22; }
+.rl { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: calc(var(--pad) + 4px) var(--pad) clamp(18px, 3.4vh, 36px); }
+.rl-top, .rl-bot { display: flex; justify-content: space-between; gap: 20px; transition: opacity 0.45s, transform 0.7s var(--e-io); }
+.rl-top { align-items: center; animation: psIn 0.9s var(--e-out) both; }
+.rl-bot { align-items: flex-end; animation: psIn 0.9s var(--e-out) 0.08s both; }
+.rl-tag { font-size: 15px; color: var(--stone); }
+.rl-name { height: 1.15em; overflow: hidden; font-size: clamp(24px, 3vw, 46px); font-weight: 640; font-stretch: 112%; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 0.1em; }
+.rl-ns { display: block; transition: transform 0.55s var(--e-out); }
+.rl-ns b { display: block; height: 1.15em; font-weight: inherit; white-space: nowrap; }
+.rl-frame { position: fixed; left: 50%; top: 46%; width: clamp(200px, 19vw, 300px); aspect-ratio: 4/5; transform: translate(-50%, -50%); border-radius: 18px; overflow: hidden; background: var(--card); z-index: 2; animation: rlIn 1s var(--e-out) both; }
+@keyframes rlIn { from { opacity: 0; transform: translate(-50%, -44%) scale(0.92); } }
+.rl-frame.free { transform: none; animation: none; }
+.rl-slides { position: absolute; inset: 0; }
+.rl-s { position: absolute; inset: 0; overflow: hidden; clip-path: inset(100% 0 0 0); background: var(--card); }
+.rl-s.on { clip-path: inset(0 0 0 0); transition: clip-path var(--sd, 0.32s) var(--e-out); }
+.rl-s img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.18); transition: transform calc(var(--sd, 0.32s) * 1.8) var(--e-out); }
+.rl-s.on img { transform: none; }
+.rl-s.card { background: var(--blue); }
+.rl-s.card img { object-fit: contain; inset: 12%; width: 76%; height: 76%; }
+.rl-s.dest img { transform: none; }
+.pre.go .rl-top { opacity: 0; transform: translateY(-14px); }
+.pre.go .rl-bot { opacity: 0; transform: translateY(14px); }
+.pre.go .pre-num .od { transform: translateY(-105%); opacity: 0; transition: transform 0.7s var(--e-io), opacity 0.5s 0.2s; }
+.pre.go .pre-num .od:nth-child(2) { transition-delay: 0.05s; }
+.pre.go .pre-num .od:nth-child(3) { transition-delay: 0.1s; }
+@media (max-width: 640px) {
+  .rl-tag { display: none; }
+  .rl-frame { width: 56vw; top: 44%; }
+  .pre-num { font-size: clamp(80px, 23vw, 130px); }
+  .rl-name { font-size: clamp(18px, 5vw, 24px); }
+}
+
+/* ---------- page morph overlay (G7, reference v22) ---------- */
+.morph { position: fixed; left: 0; top: 0; width: 0; height: 0; z-index: 58; pointer-events: none; overflow: hidden; visibility: hidden; background: var(--blue); will-change: left, top, width, height; }
+.morph.on { visibility: visible; pointer-events: auto; }
+.morph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+.morph-lbl { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; font-size: clamp(36px, 6vw, 92px); font-weight: 620; font-stretch: 116%; letter-spacing: -0.035em; text-align: center; padding: 0 var(--pad); }
+.morph-lbl span { display: block; opacity: 0; }
+/* the old page held on screen while browser back/forward swaps it underneath */
+.morph-freeze { position: fixed; inset: 0; z-index: 57; overflow: hidden; background: var(--bg); pointer-events: none; }
+/* target elements shown in their finished state */
+.morph-hit { clip-path: none !important; transition: none !important; }
+.morph-land, .morph-land * { transition: none !important; animation-play-state: paused; }
+.morph-land { clip-path: none !important; }

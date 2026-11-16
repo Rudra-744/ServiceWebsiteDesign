@@ -7,7 +7,8 @@ import { engine } from "./engine";
 // released top to bottom with a short cascade when the cover lifts.
 
 let io: IntersectionObserver | null = null;
-let hold = false;
+// the <head> script marks html.preloading before paint when the loader will run
+let hold = typeof document !== "undefined" && document.documentElement.classList.contains("preloading");
 const held = new Set<Element>();
 
 export function countUp(el: HTMLElement, dur = 1200) {

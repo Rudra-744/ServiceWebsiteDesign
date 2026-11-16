@@ -72,3 +72,6 @@ export function initEngine() {
 if (typeof window !== "undefined") initEngine();
 
 export const maxY =() => Math.max(0, document.documentElement.scrollHeight - engine.vh);
+
+/** fired on window when a page has arrived (after the loader or a page morph): Home runs its hero intro */
+export const INTRO = "cy:intro";

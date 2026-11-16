@@ -59,3 +59,36 @@ Exact values come from `ANIMATION-SPEC.md` and the reference code; when they dis
 - Playwright (production build) at 1440×900 and 390×844: home, scrolled (nav hides on scroll down, shows on scroll up), menu open with hover preview (desktop) and stacked links (phone), menu link → Rental, footer curtain at page end, back → Home restored at y = 380 with the chip back on "Home". Zero console errors.
 
 **Revert**: `git revert` the stage-1 commit (or delete `web/`).
+
+### Housekeeping — 2026-11-16
+
+- The unused root starter was moved, not deleted, to `CyphonMarketingWebsite/_old-starter/` (client's choice).
+- Git identity in `web/` is local only (`Cyphon`, client's email). **Change it before the first push to GitHub.**
+- `npm audit`: 7 moderate, all in the dev-only ESLint toolchain (`eslint-config-next` → `@typescript-eslint/*` → `minimatch` ReDoS, GHSA-g3hv-75wg-m249). `npm audit --omit=dev`: 0. Not shipped to users; the non-forced `npm audit fix` cannot resolve it because `eslint-config-next@16.4.5` pins the range. Revisit when `eslint-config-next` updates.
+
+---
+
+## Stage 2 — 2026-11-16: preloader (G1) and the card-to-page morph (G7)
+
+**What**
+
+- **Preloader "Image reel"** (`components/layout/Preloader.tsx`), ported from `runPre()` with the spec values: frame `clamp(200px,19vw,300px)` 4:5 at 46% (phone 56vw at 44%), reel slides wipe up (`clip-path inset(100% 0 0 0)` → `inset(0)`, image 1.18 → 1, max 3 slides), first slide at 380 ms, gap `lerp(440,130,count/100)`, slide duration `min(360, gap×0.85)`, stops adding at 97; odometer rolls from .55 of each step; counter: 12 → 40 fonts → up to 85 visible images → 100 window load, floor `100×(.35k + .65·inOut(k))` over 2400 ms, creep `+dt×0.0012` (max 99), cap 7 s, easing `1 − 0.0015^(dt/1000)`. Finish: destination slide copies the page's `[data-morph-to]` colour and image box (offset-based `relBox`, `fill` → `contain`) at 420 ms, `.go` after 560 ms, after 260 ms the target is shown finished (`.morph-land .in`, hidden), the frame switches to explicit box and tweens to the target rect and radius (980 ms in-out; off screen: fade + scale 1.25 over 620 ms), white → transparent (0.7 s), nav drops in, scroll unlocks, held reveals release 320 ms later with an 80 ms cascade, then the `cy:intro` event.
+- **Skip rule** (inline `<head>` script, before paint): skipped when `sessionStorage['cy-pre']` exists, with reduced motion, with `navigator.connection.saveData`, or when `effectiveType` is `slow-2g`, `2g` or `3g` (client decision: the headline must not wait behind the loader on slow devices). Otherwise `html.preloading` is set (hides the nav, holds reveals, locks scroll) before the first paint. The headline stays painted under the white layer. `.pre` is only displayed while `html.preloading` is set, so a blocked/failed script never shows a stuck loader.
+- **Morph navigation** (`providers/TransitionProvider.tsx`, `lib/morph.ts`), ported from `go()`: source = nearest card (`.svc-panel, .next, .band, .rpl-card, .stack-card, .ri-card, .occ-card, .fin-portal, .tilt, .bcell, .orb-card`), the menu preview card from the menu, else the link; off screen → the nav chip. Grow 640 ms in-out (photo out over the last 45%, label in over the last 45–50% from +40 px; ink label on light colours, white on dark). Swap: menu closed instantly, old scroll saved, reveals held, `router.push(…, { scroll: false })`, wait for the new page to commit + 60 ms. Settle 820 ms out into `[data-morph-to]` (colour blend over the first ~70%, label out in the first 35%, target photo in from 20–70%), fade 260 ms; no visible target → drift up 8% while fading over 560 ms. Reveals release 160 ms into the settle. History stack of `{from, to, path}` (max 12); a link click during a morph is queued.
+- **Back goes back into the card.** Browser back/forward is handled on `popstate`. Next swaps the route immediately, so the old page is held on screen as a static clone (`.morph-freeze`, z 57) while the overlay grows from the current page's `[data-morph-to]`; the clone is removed when the overlay covers the screen, the previous page is restored at its saved scroll, and the overlay shrinks into the exact card that was tapped (found again by its child-index path from `#main`, read before the push). Forward/unmatched pops grow from the nav chip and clear the stack, as in the reference. A pop during a forward morph settles into the page Next already shows instead of pushing.
+- Reduced motion: no loader, instant page swap.
+
+**Differences from the reference (implementation, same visible result)**
+
+- Back/forward uses the freeze clone (the static site controlled history itself; Next owns it here).
+- The tapped card is stored as a DOM path, because the page re-mounts after navigation.
+- Skip rule adds Save-Data and 2G/3G (client decision).
+
+**Tested** (production build, Playwright)
+
+- Loader on Home (desktop) and Rental (phone): reel, name roll, odometer to 100, landing; nav hidden then dropped in; headline revealed after. Zero console errors.
+- Home CTA → Contact grows from the button (blue), `?service=VR+event` kept; back → Home restored at y = 199 and the overlay shrinks into the same 192×54 button (traced frame by frame).
+- Menu (preview card) → Rental: menu closed under the overlay. Rental "Next" → Events; back → Rental at the saved scroll, `.next` on screen.
+- Reduced motion: no loader, instant navigation. Simulated 3G: `pre-skip`, no loader.
+
+**Revert**: `git revert` the stage-2 commit.
