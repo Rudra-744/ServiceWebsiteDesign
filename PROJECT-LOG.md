@@ -189,7 +189,7 @@ Exact values come from `ANIMATION-SPEC.md` and the reference code; when they dis
 
 ---
 
-## Stage 4 — 2026-11-16: service pages and contact (in progress)
+## Stage 4 — 2026-11-16: service pages and contact
 
 Written directly in Tailwind (see the conventions in the Tailwind conversion entry).
 
@@ -279,3 +279,31 @@ Written directly in Tailwind (see the conventions in the Tailwind conversion ent
     - Clear and pick 2 → payload targets "Quest 01,PICO 03". Reset only resets those 2.
     - Timeline at 7:54 shows question 2.
   - Zero console errors.
+
+### Contact (C1) — `app/contact`, `sections/contact/ContactForm.tsx`, `lib/enquiry.ts`
+
+- **Server Action** `app/contact/actions.ts`:
+  - Honeypot (`website`) → zod validation (`lib/enquiry.ts`: lengths, email, known services only, ISO date, headcount 10–250) → rate limit → Resend.
+  - The rate limit is in memory, 5 per 10 min per IP. It is marked as a shortcut: per instance, so move it to a KV store if spam gets through.
+  - Resend is called through `fetch` with a 10 s timeout and a plain-text body (no HTML from visitor input); `reply_to` is the visitor.
+  - With `RESEND_API_KEY` / `CONTACT_TO_EMAIL` / `CONTACT_FROM_EMAIL` empty, it returns "preview". The form says it isn't connected yet; the email address shown comes from `NEXT_PUBLIC_CONTACT_EMAIL` and is never hard-coded.
+- **Form:**
+  - `useActionState` with the reference's client check (name + valid email), floating labels (shared `field.ts`), multi-select pills, headcount slider ("250+").
+  - On "preview"/"sent" the button shrinks to the green 60 px circle and the tick draws.
+  - The pre-fill (`?service=` selects the pill, `?note=` fills an empty message) is read with `useSearchParams` inside `<Suspense>`. The page stays static, and the fallback is the same form without the pre-fill.
+- `content/services.ts` holds the service names, kept out of the zod module so zod isn't sent to the browser. `tsconfig` allows `.ts` import extensions so `lib/enquiry.ts` can be checked by plain Node.
+- **Self-check:** `npm run check:enquiry` (`scripts/check-enquiry.mjs`) covers validation edges, the email body, subject newline stripping and the rate-limit window.
+- **Difference from the reference:** the headcount number has no white card. In the reference the form's `.hc` class accidentally picks up the home VR HUB card styles (`.hc`).
+- **Tested:**
+  - Pixel diff: identical except that card.
+  - Flow:
+    - Pre-fill from a URL and from the rental CTA link.
+    - Empty submit shows the error.
+    - Valid submit in preview mode → message, button 60 px with the tick.
+  - Zero console errors.
+
+### Clean-up
+
+- Removed `StubPage` (no page uses it) and the four leftover stage-4 CSS reference files. `globals.css` is the only stylesheet.
+
+**Revert**: `git revert` the stage-4 commits (rental, events, video + real estate, VR HUB, contact).
