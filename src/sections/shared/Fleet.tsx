@@ -244,7 +244,7 @@ export function Fleet({ variant }: { variant: "pin" | "view" }) {
       <section ref={sec} data-nav="200+ headsets" className="fleet wrap relative h-[300vh] max-[960px]:h-[280vh]" aria-label="Our headset fleet">
         <div className="sticky top-0 isolate grid h-svh grid-cols-1 content-center gap-[clamp(18px,3vh,34px)] px-[clamp(24px,4.5vw,72px)] pt-[calc(var(--nav-h)+58px)] pb-[50px] before:absolute before:inset-x-0 before:top-[calc(var(--nav-h)+26px)] before:bottom-[22px] before:-z-1 before:rounded-stage before:bg-blue before:content-[''] max-[960px]:flex max-[960px]:flex-col max-[960px]:justify-start max-[960px]:gap-0 max-[960px]:px-[22px] max-[960px]:pt-[calc(var(--nav-h)+52px)] max-[960px]:pb-[44px]">
           <div className="min-[960px]:flex min-[960px]:items-end min-[960px]:justify-between min-[960px]:gap-[5vw] max-[960px]:block max-[960px]:flex-none">
-            <p className="m-0 flex items-start text-[length:clamp(110px,13vw,230px)] leading-[.8] font-bold tracking-[-0.06em] tabular-nums [font-stretch:122%] max-[960px]:text-[length:clamp(64px,20vw,112px)]" aria-label="200+">
+            <p className="m-0 flex items-start text-[length:clamp(110px,13vw,230px)] leading-[.8] font-bold tracking-[-0.06em] tabular-nums [font-stretch:122%] max-[960px]:text-[length:clamp(64px,20vw,112px)]"><span className="sr-only">200+</span>
               <span className="fleet-count" aria-hidden="true">
                 0
               </span>
@@ -270,7 +270,7 @@ export function Fleet({ variant }: { variant: "pin" | "view" }) {
     <section ref={sec} data-nav="200+ headsets" className="sec-tight wrap">
       <div className="grid gap-[clamp(28px,4vw,64px)] min-[960px]:grid-cols-[1fr_1.1fr] min-[960px]:items-center">
         <div>
-          <p className="m-0 text-[length:clamp(96px,16vw,280px)] leading-[.8] font-bold tracking-[-0.06em] tabular-nums [font-stretch:122%]" aria-label="200+">
+          <p className="m-0 text-[length:clamp(96px,16vw,280px)] leading-[.8] font-bold tracking-[-0.06em] tabular-nums [font-stretch:122%]"><span className="sr-only">200+</span>
             <span className="fleet-count" aria-hidden="true">
               0
             </span>

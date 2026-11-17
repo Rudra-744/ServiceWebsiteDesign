@@ -1,7 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { type ReactNode, useEffect, useRef } from "react";
-import { addMeasure, maxY } from "@/lib/engine";
+import { addMeasure, engine } from "@/lib/engine";
 import { useTicker } from "@/hooks/useTicker";
 
 // Footer curtain (ANIMATION-SPEC G12): fixed under <main>, uncovered at the end of the page.
@@ -28,7 +28,7 @@ export function FooterCurtain({ children }: { children: ReactNode }) {
 
   useTicker(() => {
     const foot = ref.current;
-    if (foot && !foot.classList.contains("in") && scrollY >= maxY() - h.current * 0.55) foot.classList.add("in");
+    if (foot && !foot.classList.contains("in") && engine.y >= engine.maxY - h.current * 0.55) foot.classList.add("in");
   });
 
   return (

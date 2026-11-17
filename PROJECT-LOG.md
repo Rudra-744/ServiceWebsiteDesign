@@ -307,3 +307,65 @@ Written directly in Tailwind (see the conventions in the Tailwind conversion ent
 - Removed `StubPage` (no page uses it) and the four leftover stage-4 CSS reference files. `globals.css` is the only stylesheet.
 
 **Revert**: `git revert` the stage-4 commits (rental, events, video + real estate, VR HUB, contact).
+
+---
+
+## Stage 5 — 2026-11-17: WebGL (hero Quest + particles, tiny planet, walkthrough)
+
+All WebGL lives in `src/gl/` and is only reached through dynamic `import()`, so none of it is in the initial bundle.
+
+| Module | Loaded when | Draws when | DPR cap |
+|---|---|---|---|
+| `gl/quest.ts`: GLB PBR renderer (reference Q3GL), WebGL2 | first visitor interaction (pointer, touch, wheel, key or scroll) after the hero intro, on idle | hero on screen, nothing covering it, menu closed, hero progress ≤ 0.35 | 2 |
+| `gl/particles.ts`: particle world (reference PTL), WebGL1 points | first scroll inside the hero | hero on screen, nothing covering it, menu closed | 2 |
+| `gl/planet.ts`: tiny-planet ray-cast shader, WebGL2 with a WebGL1 fallback | planet within 60% of a screen | planet on screen (separate observer, no margin), menu closed, view changed (or idle spin) | 1.5 |
+| `gl/tour.ts`: walkthrough flat (one draw call) | walkthrough within one screen | on screen, menu closed, view changed | 2 |
+
+- **Model:** `public/models/quest3.glb` textures re-encoded to WebP with gltf-transform 4.5.1 (`EXT_texture_webp`); `KHR_mesh_quantization` kept. Textures 435 KB → 198 KB, file 1.66 MB → 1.42 MB. The loader reads `EXT_texture_webp` sources, and the bytes are cached for the visit so re-mounts don't download again.
+- **Contexts:** every module has `dispose()` (`WEBGL_lose_context`), called on unmount. Pages re-mount on navigation and browsers cap the number of live contexts.
+- **Hero glue:** `sections/home/useHeroGL.ts`.
+  - Quest: fit pass, drag spin with inertia, ease back to the fixed pose, idle motion.
+  - The model's silhouette snapshot replaces the photo-sampled particle headset. The particle timeline follows the hero pin.
+- **Planet:** `Planet.tsx` computes the view (scale, offset, yaw/pitch, drag, gyroscope tilt), the camera icon, the building pins with in-screen cards and the degrees readout. The flat strip stays as the no-WebGL fallback and hides once GL is ready.
+- **Walkthrough:** `Tour.tsx` draws through the module and positions the room hotspots from its projection. It replaces the stage-3 `tourRender` hook.
+- **Differences from the reference:**
+  - The reference's preloader "scanned room" particle shape and its scan uniforms were never switched on there; they are not ported.
+  - The 3D model loads on the first interaction instead of on idle. Until then the photo shows (a visitor who never interacts sees the photo).
+
+### Fixes found during this stage
+
+- **Stale scroll positions (affected every page since stage 3):** ScrollTrigger positions were only refreshed on `load`, `fonts.ready` and resize. A late layout shift (the font swap reflowing headings) left every scroll scene below it offset; on Home the planet ran about 0.06 progress ahead. Fix: a `ResizeObserver` on `<body>` re-measures when the document height changes. All re-measure triggers now coalesce into one debounced run (each run forces a full layout).
+- **Forced layout every frame:** per-frame code read `scrollY` / `scrollHeight` after other tickers had written styles, forcing a full style+layout flush each frame (Nav, Marquee, FooterCurtain). The engine now caches `engine.y` (read first in every frame) and `engine.maxY` (updated on height change). Idle hero long-task excess at 4× throttle dropped from > 1,000 ms to 39 ms per 3 s.
+- **Tried and reverted:** wrapping each Home section in `<Suspense>` to split hydration. In production React sometimes client-rendered a boundary instead of hydrating it, which recreated its nodes after the reveal observer had attached (the "Why Cyphon" content never appeared in 2 of 3 runs). The TBT gain was not measurable, so the wrappers were removed.
+- **Hero photo:** the LCP image used the deprecated `priority` prop (Next 16). It now uses `loading="eager"` with `fetchPriority="high"`.
+- **Lighthouse fixes:**
+  - `app/icon.svg`, so `/favicon.ico` no longer returns 404 (logo mark from the reference).
+  - Removed the deprecated `imageOrientation` option.
+  - Fleet "200+" moved from `aria-label` on a `<p>` to sr-only text.
+  - Orbit buttons got accessible names.
+
+### Lighthouse mobile, Home (production build, local, `lighthouse@12`, 3 runs)
+
+| | Performance | Accessibility | Best practices | SEO | LCP | TBT | CLS |
+|---|---|---|---|---|---|---|---|
+| Before the fixes above | 50 / 48 / 65 | 88 | 79–96 | 100 | 4.0–4.3 s | 0.8–3.0 s | 0.003 |
+| With the experimental `<Suspense>` wrappers (8 runs) | 49 / 86 / 79 / 46 / 45 / 62 / 84 / 83 | 97 | 100 | 100 | 3.7–4.6 s | 0.14–3.6 s | 0–0.003 |
+| Final, committed (3 runs) | 46 / 73 / 47 | 97 | 100 | 100 | 3.9–4.8 s | 0.49–4.8 s | 0–0.003 |
+
+Performance swings by about 40 points between identical runs on this machine. TBT is the volatile metric: hydration and mount effects of the long Home page, under Lighthouse's simulated 4× CPU throttle. Treat these as local numbers; Lighthouse CI on a stable runner (stage 7) gives the reference figure.
+
+- **LCP is the hero photo.** On a first visit the preloader covers it, and its render delay is about 3 s in every run. That is the preloader's duration by design (it lands on the visor), and it caps Performance below the 95 target.
+- **Remaining colour-contrast flags** are the deliberately dimmed scroll-reveal words, the inactive Occasions rows and the VR HUB teaser tag.
+
+### Tested
+
+- Home pixel diff against the reference:
+  - Walkthrough and planet match. The planet matched only after the scroll-position fix; before, it showed the "inside" view early.
+  - Hero particle and Quest shots differ only by spin angle and random burst timing.
+- GL draw counts per second (instrumented):
+  - menu open → 0
+  - all GL sections off-screen → 0
+  - walkthrough idle → 0 (redraws only on change)
+- Zero console errors on every page.
+
+**Revert**: `git revert` the stage-5 commit. Keep the original GLB from history if the WebP textures need re-checking.

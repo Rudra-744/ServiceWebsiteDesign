@@ -28,7 +28,7 @@ export function Marquee() {
   }, []);
 
   useTicker((_, dt) => {
-    const st = S.current, y = scrollY;
+    const st = S.current, y = engine.y;
     const dy = st.lastY < 0 ? 0 : y - st.lastY;
     st.lastY = y;
     st.vel = lerp(st.vel, (dy / (dt || 16)) * 16, 0.2);

@@ -1,5 +1,5 @@
 "use client";
-import { ScrollTrigger } from "./gsap";
+import { ScrollTrigger, gsap } from "./gsap";
 // Shared client state for the motion engine (reference site.js globals: RM, FINE, vw, vh, menuOpen, PRE.cover, busy).
 // One module-level object, so every canvas loop can check "is something covering the page?" without React re-renders.
 
@@ -17,6 +17,10 @@ export const engine = {
   cover: false,
   /** a page transition is running */
   busy: false,
+  /** scrollY, read once at the start of every frame (before any ticker writes styles: a later read would force a layout) */
+  y: 0,
+  /** max scroll, cached on load/resize/height change (reading scrollHeight per frame forces a layout) */
+  maxY: 0,
 };
 
 const listeners = new Set<Listener>();
@@ -47,6 +51,13 @@ export function measureAll() {
   ScrollTrigger.refresh();
 }
 
+/** load, font, resize and height-change triggers coalesce into one re-measure (each run forces a full layout) */
+let mt = 0;
+const scheduleMeasure = () => {
+  clearTimeout(mt);
+  mt = window.setTimeout(measureAll, 120);
+};
+
 export function initEngine() {
   if (engine.ready || typeof window === "undefined") return;
   engine.ready = true;
@@ -64,11 +75,29 @@ export function initEngine() {
       engine.vh = innerHeight;
       lastW = innerWidth;
       // phones fire resize when the URL bar hides; only re-measure when the width changed (or on desktop)
-      if (wChanged || engine.FINE) measureAll();
+      if (wChanged || engine.FINE) scheduleMeasure();
     }, 140);
   });
-  if (document.fonts?.ready) document.fonts.ready.then(measureAll);
-  addEventListener("load", measureAll);
+  if (document.fonts?.ready) document.fonts.ready.then(scheduleMeasure);
+  addEventListener("load", scheduleMeasure);
+  // any late layout shift (font swap, images, lazy sections) moves the sections below it: re-read positions once it settles
+  let lastH = 0;
+  new ResizeObserver(() => {
+    const h = document.documentElement.scrollHeight;
+    engine.maxY = Math.max(0, h - innerHeight);
+    if (Math.abs(h - lastH) < 1) return;
+    lastH = h;
+    scheduleMeasure();
+  }).observe(document.body);
+  // runs first on every frame, so per-frame code reads a cached scroll position instead of forcing layout mid-frame
+  engine.y = scrollY;
+  gsap.ticker.add(
+    () => {
+      engine.y = scrollY;
+    },
+    false,
+    true,
+  );
 }
 
 // flags must be known before any component effect reads them

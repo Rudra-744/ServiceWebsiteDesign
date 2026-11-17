@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { LOGO, LOGO_MARK, LogoMark } from "./IconSprite";
-import { addMeasure, engine, maxY, onEngine } from "@/lib/engine";
+import { addMeasure, engine, onEngine } from "@/lib/engine";
 import { setMenu } from "@/lib/menu";
 import { clamp } from "@/lib/motion";
 import { contactHref } from "@/content/site";
@@ -72,7 +72,7 @@ export function Nav() {
   useTicker(() => {
     const s = st.current, nav = navRef.current;
     if (!nav) return;
-    const y = scrollY;
+    const y = engine.y;
     if (y === s.lastY && !s.needs) return;
     s.lastY = y;
     s.needs = false;
@@ -81,7 +81,7 @@ export function Nav() {
     else if (dy < -3 || y < 160) nav.classList.remove("hide");
     nav.classList.toggle("compact", y > 120);
     s.navY = y;
-    const m = maxY(), p = m > 0 ? clamp(y / m) : 0;
+    const m = engine.maxY, p = m > 0 ? clamp(y / m) : 0;
     nav.querySelector<SVGCircleElement>(".b-ring circle")!.style.strokeDashoffset = (132 * (1 - p)).toFixed(2);
     nav.querySelector<SVGPathElement>(".logo svg path")!.style.transform = `rotate(${((y * 0.14) % 360).toFixed(1)}deg)`;
     let l = s.secs.length ? s.secs[0].l : "";

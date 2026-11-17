@@ -1,6 +1,7 @@
 "use client";
 import { type CSSProperties, useEffect, useRef } from "react";
-import { engine } from "@/lib/engine";
+import type { createTour } from "@/gl/tour";
+import { addMeasure, engine } from "@/lib/engine";
 import { map } from "@/lib/motion";
 import { scrollToY } from "@/lib/scroll";
 import { tourPathAt, tourTimeline } from "@/lib/tourPath";
@@ -10,9 +11,9 @@ import { TOUR_STOPS } from "@/content/tour";
 
 // 3D walkthrough of the sample apartment (ANIMATION-SPEC H9 / RE2), pinned 520vh.
 // This file owns the HUD, the camera path, the look-around state and the controls.
-// The WebGL renderer plugs in through `tour.render` (stage 5); until then the sky colour shows behind the HUD.
-
-export type TourCam = { x: number; z: number; yaw: number; yawO: number; pitO: number };
+// The WebGL renderer (gl/tour.ts) is imported when the section comes within one screen of the viewport; it only draws
+// while the section is on screen, the menu is closed and the view changed. Without WebGL the sky colour shows behind the HUD.
+type TourGL = NonNullable<ReturnType<typeof createTour>>;
 
 const MAP = `<svg viewBox="-.5 -.5 12 9" aria-hidden="true">
   <rect x="0" y="0" width="7" height="8" fill="#EEF3FF"/><rect x="7" y="0" width="4" height="4.5" fill="#F5F5F7"/><rect x="7" y="4.5" width="4" height="3.5" fill="#E4ECFF"/>
@@ -24,6 +25,7 @@ const MAP = `<svg viewBox="-.5 -.5 12 9" aria-hidden="true">
 export function Tour({ style }: { style?: CSSProperties }) {
   const sec = useRef<HTMLElement>(null);
   const S = useRef({ yawO: 0, yawT: 0, pitO: 0, pitT: 0, base: { x: 3.5, z: 0.6, yaw: 0 }, stop: -1, vis: false, dirty: true, swapT: 0 });
+  const gl = useRef<TourGL | null>(null);
 
   const go = (i: number) => {
     const r = sec.current!.getBoundingClientRect();
@@ -75,7 +77,32 @@ export function Tour({ style }: { style?: CSSProperties }) {
     cv.addEventListener("pointercancel", up);
     const io = new IntersectionObserver((es) => es.forEach((e) => ((st.vis = e.isIntersecting), (st.dirty = true))));
     io.observe(root);
+    // lazy WebGL: load the renderer once the walkthrough is within one screen
+    let alive = true;
+    const near = new IntersectionObserver(
+      (es) => {
+        if (!es.some((e) => e.isIntersecting)) return;
+        near.disconnect();
+        import("@/gl/tour").then(({ createTour }) => {
+          if (!alive) return;
+          gl.current = createTour(cv);
+          gl.current?.size();
+          st.dirty = true;
+        });
+      },
+      { rootMargin: "100% 0px" },
+    );
+    near.observe(root);
+    const offM = addMeasure(() => {
+      gl.current?.size();
+      st.dirty = true;
+    });
     return () => {
+      alive = false;
+      near.disconnect();
+      offM();
+      gl.current?.dispose();
+      gl.current = null;
       cv.removeEventListener("pointerdown", down);
       cv.removeEventListener("pointermove", move);
       cv.removeEventListener("pointerup", up);
@@ -116,8 +143,14 @@ export function Tour({ style }: { style?: CSSProperties }) {
     st.dirty = false;
     const yaw = st.base.yaw + st.yawO;
     sec.current!.querySelector(".tm-cam")!.setAttribute("transform", `translate(${st.base.x.toFixed(2)} ${(8 - st.base.z).toFixed(2)}) rotate(${yaw.toFixed(1)})`);
-    // stage 5: the WebGL view renders here and projects the room hotspots
-    tourRender.fn?.(sec.current!, { ...st.base, yawO: st.yawO, pitO: st.pitO }, st.stop);
+    const R = gl.current;
+    if (!R) return;
+    const pos = R.draw({ ...st.base, yawO: st.yawO, pitO: st.pitO }, TOUR_STOPS, st.stop);
+    sec.current!.querySelectorAll<HTMLElement>(".tour-hot").forEach((b, i) => {
+      const q = pos[i];
+      b.classList.toggle("show", !!q);
+      if (q) b.style.transform = `translate3d(${q[0].toFixed(1)}px,${q[1].toFixed(1)}px,0) translate(-50%,-50%)`;
+    });
   });
 
   const s0 = TOUR_STOPS[0];
@@ -198,6 +231,3 @@ export function Tour({ style }: { style?: CSSProperties }) {
 
 const PADBTN = "grid place-items-center rounded-[16px] [transition:background-color_.3s,color_.3s,transform_.35s_var(--e-spring)] active:[transform:scale(.9)] disabled:pointer-events-none disabled:opacity-40 max-[820px]:rounded-[13px] [&_svg]:size-[22px] max-[820px]:[&_svg]:size-[19px]";
 const PADLIGHT = "bg-white text-ink shadow-[0_0_0_1px_var(--color-line)] hover:bg-blue hover:shadow-none";
-
-/** stage 5 sets this to the WebGL renderer (loaded lazily) */
-export const tourRender: { fn: null | ((root: HTMLElement, cam: TourCam, stop: number) => void) } = { fn: null };

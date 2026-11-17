@@ -9,6 +9,7 @@ import { E, clamp, lerp, map } from "@/lib/motion";
 import { charHTML, splitLinesHTML } from "@/lib/split";
 import { useScrollScene } from "@/hooks/useScrollScene";
 import { useTicker } from "@/hooks/useTicker";
+import { useHeroGL } from "./useHeroGL";
 import { HERO_CAPS, HERO_PAIRS, HERO_PROOF } from "@/content/home";
 import { contactHref } from "@/content/site";
 
@@ -16,7 +17,7 @@ import { contactHref } from "@/content/site";
 // H1b: occasion tabs; "Without VR" line, then a cornflower band wipes the second line into the Cyphon version,
 //      a tag and a connector line to the headset; 7.5 s per occasion; the mouse slides the band.
 // H1:  pinned 380vh (340vh phone) timeline: headline/side text leave, the visor dissolves left to right (--f mask),
-//      the cornflower lens opens from the headset to the screen, captions per service. Particles + 3D: stage 5.
+//      the cornflower lens opens from the headset to the screen, captions per service. Particles + 3D Quest: useHeroGL.
 
 const P0 = HERO_PAIRS[0];
 const pairHTML = (l1: string, l2: string) => splitLinesHTML([{ text: l1, cls: "hl-1" }, { text: l2, cls: "hl-2" }]);
@@ -49,6 +50,8 @@ export function Hero() {
     lastNow: 0,
     probe: null as HTMLSpanElement | null,
   });
+
+  useHeroGL(sec, pin);
 
   // DOM lookups inside the pin (cached once)
   const q = <T extends Element = HTMLElement>(s: string) => pin.current!.querySelector<T>(s)!;
@@ -415,7 +418,8 @@ export function Hero() {
             alt="Meta Quest 3 headset"
             width={537}
             height={402}
-            priority
+            loading="eager"
+            fetchPriority="high"
             draggable={false}
             sizes="(max-width: 819px) 82vw, (min-width: 1100px) min(32vw, 52vh), min(40vw, 580px)"
           />

@@ -189,6 +189,7 @@ export function Orbit() {
               type="button"
               key={name}
               data-i={i}
+              aria-label={name}
               aria-pressed={i === 0}
               className="orb-p group/op absolute top-0 left-0 inline-flex h-[54px] items-center gap-[10px] rounded-full pr-5 pl-[7px] text-[16px] font-semibold whitespace-nowrap text-ink will-change-[transform,opacity] [transition:background-color_.45s,box-shadow_.45s] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ink motion:opacity-0 max-[900px]:size-12 max-[900px]:justify-center max-[900px]:gap-0 max-[900px]:px-1 [&.on]:bg-blue [&.on]:shadow-[0_18px_40px_-18px_rgba(84,140,255,.9)] [&:not(.on)]:bg-white [&:not(.on)]:shadow-[inset_0_0_0_1px_var(--color-line),0_14px_30px_-18px_rgba(5,5,5,.3)]"
             >
