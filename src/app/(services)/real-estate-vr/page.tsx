@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { JsonLd, pageGraph, pageMetadata } from "@/lib/seo";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { Faq } from "@/components/ui/Faq";
 import { FAQS } from "@/content/faqs";
@@ -9,7 +9,7 @@ import { FloorPlan } from "@/sections/shared/FloorPlan";
 import { NextPage, PageIntro } from "@/sections/shared/PageIntro";
 import { Tour } from "@/sections/shared/Tour";
 
-export const metadata: Metadata = { title: "Real estate VR" };
+export const metadata = pageMetadata("real-estate", "Real estate VR");
 
 const STEPS = [
   ["Share your plans", "Provide architectural drawings, floor plans or available 3D designs."],
@@ -22,6 +22,7 @@ const STEPS = [
 export default function Page() {
   return (
     <div className="page" data-page="real-estate">
+      <JsonLd data={pageGraph("real-estate", "Real estate VR (virtual sample house)")} />
       <PageIntro page="real-estate">
         <GrowMedia />
       </PageIntro>

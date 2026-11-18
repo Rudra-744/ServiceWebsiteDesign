@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/seo";
+import { SITE_DESCRIPTION } from "@/content/site";
 import { ScrubWords } from "@/components/motion/ScrubWords";
 import { Hero } from "@/sections/home/Hero";
 import { Orbit } from "@/sections/home/Orbit";
@@ -14,6 +16,8 @@ import { Fleet } from "@/sections/shared/Fleet";
 import { FloorPlan } from "@/sections/shared/FloorPlan";
 import { Tour } from "@/sections/shared/Tour";
 import { MANIFESTO, PLAN_STEPS_HOME } from "@/content/home";
+
+export const metadata = { ...pageMetadata("home", "Home", SITE_DESCRIPTION), title:{ absolute: "Cyphon — VR headset rental, VR events, 360° video and VR HUB" } };
 
 // Home: composes sections in the reference order (ANIMATION-SPEC §2, H1–H13).
 export default function Home() {

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { JsonLd, pageGraph, pageMetadata } from "@/lib/seo";
 import { ScrubWords } from "@/components/motion/ScrubWords";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { Faq } from "@/components/ui/Faq";
@@ -10,12 +10,13 @@ import { Explorer } from "@/sections/events/Explorer";
 import { Includes } from "@/sections/events/Includes";
 import { NextPage } from "@/sections/shared/PageIntro";
 
-export const metadata: Metadata = { title: "VR events & experiences" };
+export const metadata = pageMetadata("events", "VR events & experiences");
 
 // VR events (ANIMATION-SPEC §4, E1–E5), in the reference order.
 export default function Page() {
   return (
     <div className="page" data-page="events">
+      <JsonLd data={pageGraph("events", "VR events and experiences")} />
       <EventsHero />
       <section data-nav="Why it works" className="wrap py-[clamp(90px,13vw,200px)]">
         <ScrubWords parts={["Cyphon helps event organisers create experiences that entertain audiences and leave a lasting impression."]} />

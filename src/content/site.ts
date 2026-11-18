@@ -7,6 +7,10 @@ export const site = {
   about: "End-to-end virtual reality for businesses, institutions, real estate and events.",
 };
 
+/** default meta description (layout and Home) */
+export const SITE_DESCRIPTION =
+  "Cyphon provides end-to-end virtual reality: 200+ VR headsets for rental, immersive events, 360° video production, virtual sample houses for real estate and the VR HUB headset management console.";
+
 export type RouteKey = "home" | "rental" | "events" | "video" | "real-estate" | "vr-hub" | "contact";
 
 /** every page: path, short title (nav chip, morph label, menu), menu descriptor */

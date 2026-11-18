@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { JsonLd, pageGraph, pageMetadata } from "@/lib/seo";
 import { FillWords } from "@/components/motion/FillWords";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { Faq } from "@/components/ui/Faq";
@@ -12,12 +12,13 @@ import { Unbox } from "@/sections/rental/Unbox";
 import { Fleet } from "@/sections/shared/Fleet";
 import { NextPage } from "@/sections/shared/PageIntro";
 
-export const metadata: Metadata = { title: "VR headset rental" };
+export const metadata = pageMetadata("rental", "VR headset rental");
 
 // Headset rental (ANIMATION-SPEC §3, R1–R9), in the reference order.
 export default function Page() {
   return (
     <div className="page" data-page="rental">
+      <JsonLd data={pageGraph("rental", "VR headset rental")} />
       <RentalHero />
       <FillWords nav="How it works" text="You pick the date and the headcount. We bring the headsets, set them up, run them with your guests and pack everything away after." />
       <Planner />

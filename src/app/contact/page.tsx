@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Suspense } from "react";
 import { SplitText } from "@/components/motion/SplitText";
 import { site } from "@/content/site";
 import { ContactForm, ContactFromParams } from "@/sections/contact/ContactForm";
 
-export const metadata: Metadata = { title: "Contact" };
+export const metadata = pageMetadata("contact", "Contact");
 
 // Contact (ANIMATION-SPEC §8, C1). The form reads ?service / ?note on the client, so it sits in a Suspense boundary
 // and the page stays static (the fallback is the same form without the pre-fill).

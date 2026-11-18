@@ -14,13 +14,14 @@ export function FillWords({ text, nav }: { text: string; nav: string }) {
       const n = Math.round(Math.min(1, k / 0.8) * words.length);
       if (n === last.current) return;
       last.current = n;
-      p.current!.querySelectorAll("span").forEach((w, i) => w.classList.toggle("on", i < n));
+      p.current!.querySelectorAll("span[aria-hidden]").forEach((w, i) => w.classList.toggle("on", i < n));
     },
     { type: "view", start: 0.82, end: 0.38 },
   );
   return (
     <section data-nav={nav} className="wrap py-[clamp(90px,13vw,200px)]">
-      <p ref={p} aria-label={text} className="m-0 max-w-[23ch] text-[length:clamp(30px,4.3vw,70px)] leading-[1.06] font-semibold tracking-[-0.032em] [font-stretch:110%]">
+      <p ref={p} className="m-0 max-w-[23ch] text-[length:clamp(30px,4.3vw,70px)] leading-[1.06] font-semibold tracking-[-0.032em] [font-stretch:110%]">
+        <span className="sr-only">{text}</span>
         {words.map((w, i) => (
           <span key={i} aria-hidden="true" className="text-[rgba(5,5,5,.14)] [transition:color_.45s_var(--e-out)] rm:text-ink [&.on]:text-ink">
             {w}

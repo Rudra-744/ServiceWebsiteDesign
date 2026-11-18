@@ -103,6 +103,7 @@ Exact values come from `ANIMATION-SPEC.md` and the reference code; when they dis
 
 | # | Issue | Found | Status |
 |---|---|---|---|
+| 2 | Home hero photo (LCP) paints late on slow phones: 1.1–7.6 s on a 4× throttled phone, ~3.5 s render delay in Lighthouse; Performance median 76 (target 95). | Stage 5 | Open: investigate in stage 7 (main-thread work before first paint). |
 | 1 | Back navigation while scrolled to the bottom showed a white footer area for ~0.6 s (the freeze cloned only `<main>`). | Stage 2 | Fixed 2026-11-16 (footer cloned into the freeze). Re-check in the final audit. |
 
 ---
@@ -369,3 +370,66 @@ Performance swings by about 40 points between identical runs on this machine. TB
 - Zero console errors on every page.
 
 **Revert**: `git revert` the stage-5 commit. Keep the original GLB from history if the WebP textures need re-checking.
+
+### After stage 5 — 2026-11-18: phone preloader skip and deferred lower Home sections (client request)
+
+- **Preloader:**
+  - Skipped on phones and touch screens: `(hover: none), (max-width: 819px)` in the `<head>` flags script.
+  - Desktop keeps it, with the headline painted underneath.
+  - Verified: `html.preloading` is false at 390 px with touch and true at 1440 px.
+- **Deferred setup** (`lib/near.ts`: one shared IntersectionObserver, 150% margin):
+  - `useScrollScene` now creates its ScrollTrigger only when the section is within 1.5 screens. Anything already there gets it on the first frame.
+  - The mount effects of Orbit, Fleet, Marquee, Occasions, FloorPlan, HubTeaser and FinalCta moved to `useNearEffect`, which runs the effect when near and then the measures it registered (`runSetup` in `engine.ts`).
+- **Fix found while testing:** Occasions opened its first row only once its setup ran, so the section grew by 64 px when it came near and pushed the rest of the page down (the "Why Cyphon" phone screenshot cut off its last row). The first row is now open in the server HTML. A height tracker shows no height change while scrolling the whole page.
+- **Tested:** every Home section at 1440×900 and 390×844, reached both by direct jump and by scrolling:
+  - Reveals all fire, including "Why Cyphon" 4/4 desktop and 5/5 phone.
+  - Each section's animation starts.
+  - My checker flagged three items; each is expected behaviour:
+    - Services' heading is off to the left once the desktop track has moved.
+    - Services' phone stack has no progress bar (hidden by design).
+    - The final CTA title is revealed by the portal (`data-manual`), not the observer. It is revealed at the end of the scene.
+  - Pixel diff against the stage-5 set: every section ≤ 2.9% apart from the hero shots (spin and burst timing). Zero console errors.
+- No section needed reverting.
+
+**Lighthouse mobile** (production build, local, `lighthouse@12`):
+
+| Page | Runs (Performance) | Median | Accessibility | Best practices | SEO | LCP | TBT |
+|---|---|---|---|---|---|---|---|
+| Home | 59 / 76 / 55 / 87 / 86 | **76** | 97 | 100 | 100 | 4.0–4.5 s | 60–1,520 ms |
+| Headset rental | 62 / 71 / 76 | **71** | 92 → fixed in stage 6 | 100 | 100 | 4.1–4.3 s | 380–930 ms |
+
+- LCP is still the hero photo: about 3.5 s of render delay in Lighthouse's model, even without the loader.
+- A real throttled phone paints it anywhere from 1.1 s to 7.6 s, depending on when the main thread frees up. This is listed under Known issues for stage 7.
+
+---
+
+## Stage 6 — 2026-11-18: SEO, structured data, sitemap, robots, llms.txt, share images, security headers
+
+- **Metadata:** `lib/seo.tsx` `pageMetadata(key, title)` gives every page a title, a description (its intro lede), a canonical URL, Open Graph and a Twitter card.
+  - Home keeps its full title and uses the site description (`SITE_DESCRIPTION` in `content/site.ts`, shared with the layout).
+  - Privacy and terms stay `noindex`.
+- **JSON-LD** (`JsonLd`, with `<` escaped):
+  - `Organization` and `WebSite` on every page.
+  - Each service page adds `Service` (VR HUB: `SoftwareApplication`), `BreadcrumbList` and `FAQPage`. The FAQ comes from `content/faqs.ts`, the same source as the visible accordions.
+  - Address, phone and social profiles are left out until the client sends them (marked TODO).
+- **Routes:**
+  - `app/sitemap.ts`: 7 public pages.
+  - `app/robots.ts`: allows everything except /privacy and /terms; points to the sitemap.
+  - `app/llms.txt/route.ts`: static plain text with the pages, ledes and all FAQs.
+  - All URLs use `NEXT_PUBLIC_SITE_URL` (TODO(client): real domain).
+- **Share images:** `lib/og.tsx` + `opengraph-image.tsx` for Home and each page (1200×630 PNG, built statically: logo, page crumb, headline on the cornflower band). Default font, so no font file ships.
+- **Security headers** (`next.config.ts`, every route):
+  - HSTS (2 years, preload), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`.
+  - `Permissions-Policy` blocks camera, microphone, location, payment and USB, and allows the motion sensors for the planet's "Tilt to look around".
+  - A partial CSP: `base-uri`, `object-src 'none'`, `frame-ancestors 'none'`, `form-action 'self'`, `upgrade-insecure-requests`.
+  - Shortcut: no `script-src`. The inline head script, JSON-LD and Next's inline scripts would need nonces, which force dynamic rendering. Marked in the code.
+- **Accessibility:** `FillWords` (rental statement) moved its `aria-label` off the `<p>` into sr-only text. The word scrub now selects only the word spans.
+- **Tested:**
+  - Build: 22 routes, all static.
+  - `curl`: every header present; robots, sitemap and llms.txt served.
+  - Rental page: canonical, og:title, og:image (200, image/png, 38 KB), twitter card.
+  - JSON-LD parses: Organization, WebSite, Service, BreadcrumbList, FAQPage (6 questions).
+  - Rental word fill: 24/24 words light. Zero console errors.
+- The layout file in this commit also carries the phone preloader skip described in the entry above.
+
+**Revert**: `git revert` this commit.

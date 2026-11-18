@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { JsonLd, pageGraph, pageMetadata } from "@/lib/seo";
 import { SplitText } from "@/components/motion/SplitText";
 import { Button } from "@/components/ui/Button";
 import { Faq } from "@/components/ui/Faq";
@@ -12,12 +12,13 @@ import { LiveControl } from "@/sections/hub/LiveControl";
 import { Platform } from "@/sections/hub/Platform";
 import { Strike } from "@/sections/hub/Strike";
 
-export const metadata: Metadata = { title: "VR HUB" };
+export const metadata = pageMetadata("vr-hub", "VR HUB");
 
 // VR HUB (ANIMATION-SPEC §7, HB1–HB7), in the reference order. Last page in the sequence, so no "Next" link.
 export default function Page() {
   return (
     <div className="page" data-page="vr-hub">
+      <JsonLd data={pageGraph("vr-hub", "VR HUB", "SoftwareApplication")} />
       <HubHero />
       <Strike />
       <Platform />

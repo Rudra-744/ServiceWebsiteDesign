@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { JsonLd, pageGraph, pageMetadata } from "@/lib/seo";
 import { ScrubWords } from "@/components/motion/ScrubWords";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { Faq } from "@/components/ui/Faq";
@@ -7,12 +7,13 @@ import { NextPage, PageIntro } from "@/sections/shared/PageIntro";
 import { Bento } from "@/sections/video/Bento";
 import { Pano } from "@/sections/video/Pano";
 
-export const metadata: Metadata = { title: "360° video production" };
+export const metadata = pageMetadata("video", "360° video production");
 
 // 360° video (ANIMATION-SPEC §5, V1–V3), in the reference order.
 export default function Page() {
   return (
     <div className="page" data-page="video">
+      <JsonLd data={pageGraph("video", "360° video production")} />
       <PageIntro page="video">
         <Pano />
       </PageIntro>
