@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useNearEffect } from "@/hooks/useNearEffect";
 import { addMeasure, engine } from "@/lib/engine";
 import { clamp, lerp } from "@/lib/motion";
 import { useTicker } from "@/hooks/useTicker";
@@ -11,7 +12,7 @@ export function Marquee() {
   const root = useRef<HTMLDivElement>(null);
   const S = useRef({ x: 0, w: 0, vis: false, skew: 0, vel: 0, dir: 1, lastY: -1 });
 
-  useEffect(() => {
+  useNearEffect(root, () => {
     const st = S.current, m = root.current!, t = m.querySelector<HTMLElement>(".mq-track")!;
     const base = t.innerHTML;
     let guard = 0;
@@ -25,7 +26,7 @@ export function Marquee() {
       io.disconnect();
       off();
     };
-  }, []);
+  });
 
   useTicker((_, dt) => {
     const st = S.current, y = engine.y;

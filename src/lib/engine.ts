@@ -35,9 +35,24 @@ export function setEngine(patch: Partial<typeof engine>) {
 
 /** layout re-reads (reference `measures[]`): run on load, font load, resize and page change */
 const measures = new Set<() => void>();
+let collecting: (() => void)[] | null = null;
 export function addMeasure(fn: () => void) {
   measures.add(fn);
+  collecting?.push(fn);
   return () => void measures.delete(fn);
+}
+/** run a deferred section setup, then the measures it registered (the page's first measureAll has already happened) */
+export function runSetup(setup: () => void | (() => void)) {
+  collecting = [];
+  let cleanup: void | (() => void);
+  try {
+    cleanup = setup();
+  } finally {
+    const added = collecting;
+    collecting = null;
+    added.forEach((m) => m());
+  }
+  return cleanup;
 }
 export function measureAll() {
   measures.forEach((m) => {

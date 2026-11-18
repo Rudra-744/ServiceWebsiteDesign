@@ -1,7 +1,8 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { type CSSProperties, useEffect, useRef } from "react";
+import { type CSSProperties, useRef } from "react";
+import { useNearEffect } from "@/hooks/useNearEffect";
 import { SplitText } from "@/components/motion/SplitText";
 import { addMeasure, engine } from "@/lib/engine";
 import { E, clamp, lerp } from "@/lib/motion";
@@ -16,7 +17,7 @@ export function Orbit() {
   const S = useRef({ W: 0, H: 0, cx: 0, cy: 0, rx: 0, ry: 0, cw: 0, pw: [] as number[], ph: [] as number[], target: 0, cur: 0, intro: 0, introT: 0, active: -1, raf: 0, armed: false, pinTop: 0, pinLen: 1, swapT: 0, draw: () => {}, kick: () => {} });
   const N = ORBIT.length, STEP = (Math.PI * 2) / N;
 
-  useEffect(() => {
+  useNearEffect(sec, () => {
     const st = S.current, root = sec.current!;
     const stage = root.querySelector<HTMLElement>(".orb-stage")!, core = root.querySelector<HTMLElement>(".orb-core")!, disc = root.querySelector<HTMLElement>(".orb-disc")!;
     const ps = [...root.querySelectorAll<HTMLButtonElement>(".orb-p")], rings = [...root.querySelectorAll<SVGEllipseElement>(".orb-ring")];
@@ -146,7 +147,7 @@ export function Orbit() {
       cancelAnimationFrame(st.raf);
       clearTimeout(st.swapT);
     };
-  }, [N, STEP]);
+  });
 
   useScrollScene(sec, (p) => {
     // dwell on each audience, then glide to the next

@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useNearEffect } from "@/hooks/useNearEffect";
 import { addMeasure, engine } from "@/lib/engine";
 import { E, clamp, lerp, map, rnd } from "@/lib/motion";
 import { QUEST, drawQuest, loadQuest, rrect } from "@/lib/quest";
@@ -20,7 +21,7 @@ export function Fleet({ variant }: { variant: "pin" | "view" }) {
   const sec = useRef<HTMLElement>(null);
   const F = useRef({ list: [] as Item[], cols: 0, rows: 0, cell: 0, W: 0, H: 0, dpr: 1, hub: { x: 0, y: 0 }, hubW: 0, hubH: 0, maxD: 1, shown: -1, lastP: 0, raf: 0, draw: (p: number) => void p });
 
-  useEffect(() => {
+  useNearEffect(sec, () => {
     const st = F.current, root = sec.current!;
     const cv = root.querySelector<HTMLCanvasElement>(".fleet-cv")!, ctx = cv.getContext("2d")!;
     const cnt = root.querySelector(".fleet-count")!, plus = root.querySelector(".plus")!, dep = root.querySelector(".fs-dep")!, con = root.querySelector(".fs-con")!;
@@ -223,7 +224,7 @@ export function Fleet({ variant }: { variant: "pin" | "view" }) {
       QUEST.cbs.delete(ready);
       cancelAnimationFrame(st.raf);
     };
-  }, []);
+  });
 
   useScrollScene(sec, (p) => F.current.draw(p), variant === "pin" ? { type: "pin" } : { type: "view", start: 0.85, end: 0.2 });
 

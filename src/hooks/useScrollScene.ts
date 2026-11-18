@@ -1,6 +1,7 @@
 "use client";
 import { type RefObject, useEffect, useRef } from "react";
 import { ScrollTrigger } from "@/lib/gsap";
+import { whenNear } from "@/lib/near";
 
 export type SceneOpts = { type?: "pin" | "view"; start?: number; end?: number };
 
@@ -10,6 +11,8 @@ export type SceneOpts = { type?: "pin" | "view"; start?: number; end?: number };
  *         (the section is tall; its child is `position: sticky; height: 100svh`).
  * - view: p = 0 when the element top reaches `start × vh`, 1 when its bottom reaches `end × vh`.
  * fn only runs when p moved more than 0.0003 (or on refresh).
+ * The trigger is created once the element is within 1.5 screens of the viewport (first frame for anything already there),
+ * so far-away sections cost nothing at load; it then runs once with the current progress, before the section shows.
  */
 export function useScrollScene<T extends HTMLElement>(ref: RefObject<T | null>, fn: (p: number) => void, opts: SceneOpts = {}) {
   const cb = useRef(fn);
@@ -20,21 +23,26 @@ export function useScrollScene<T extends HTMLElement>(ref: RefObject<T | null>, 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    let last = -1;
+    let last = -1, st: ScrollTrigger | null = null;
     const run = (p: number, force = false) => {
       if (force || Math.abs(p - last) > 0.0003) {
         last = p;
         cb.current(p);
       }
     };
-    const st = ScrollTrigger.create({
-      trigger: el,
-      start: type === "pin" ? "top top" : `top ${start * 100}%`,
-      end: type === "pin" ? "bottom bottom" : `bottom ${end * 100}%`,
-      onUpdate: (s) => run(s.progress),
-      onRefresh: (s) => run(s.progress, true),
+    const off = whenNear(el, () => {
+      st = ScrollTrigger.create({
+        trigger: el,
+        start: type === "pin" ? "top top" : `top ${start * 100}%`,
+        end: type === "pin" ? "bottom bottom" : `bottom ${end * 100}%`,
+        onUpdate: (s) => run(s.progress),
+        onRefresh: (s) => run(s.progress, true),
+      });
+      run(st.progress, true);
     });
-    run(st.progress, true);
-    return () => st.kill();
+    return () => {
+      off();
+      st?.kill();
+    };
   }, [ref, type, start, end]);
 }

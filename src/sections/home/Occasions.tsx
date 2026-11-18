@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useNearEffect } from "@/hooks/useNearEffect";
 import { SplitText } from "@/components/motion/SplitText";
 import { Button } from "@/components/ui/Button";
 import { engine } from "@/lib/engine";
@@ -13,7 +14,7 @@ export function Occasions() {
   const list = useRef<HTMLUListElement>(null);
   const S = useRef({ cur: -1, hover: -1, t: 0, set: (i: number) => void i });
 
-  useEffect(() => {
+  useNearEffect(list, () => {
     const st = S.current, ul = list.current!, rows = [...ul.querySelectorAll<HTMLElement>(".occ-row")];
     const card = ul.closest(".occ-grid")!.querySelector<HTMLElement>(".occ-card-txt")!;
     st.set = (i: number) => {
@@ -47,7 +48,7 @@ export function Occasions() {
       ul.removeEventListener("pointerleave", leave);
       clearTimeout(st.t);
     };
-  }, []);
+  });
 
   useScrollScene(
     list,
@@ -80,8 +81,9 @@ export function Occasions() {
       </div>
       <div className="occ-grid grid gap-10 min-[960px]:grid-cols-[1.5fr_1fr] min-[960px]:gap-[5vw]">
         <ul className="occ-list m-0 list-none p-0" ref={list}>
-          {OCCASIONS.map(([, , name, desc]) => (
-            <li className="occ-row group/or relative cursor-default py-[clamp(14px,1.6vw,22px)]" data-reveal="" key={name}>
+          {OCCASIONS.map(([, , name, desc], i) => (
+            // the first row starts open in the HTML, so the section never grows when its setup starts near the viewport
+            <li className={`occ-row group/or relative cursor-default py-[clamp(14px,1.6vw,22px)] ${i === 0 ? "on" : ""}`} data-reveal="" key={name}>
               <span className="rule absolute inset-x-0 top-0" />
               <span className="flex items-center gap-[.3em] text-[length:clamp(34px,5vw,84px)] leading-none font-[620] tracking-[-0.035em] text-ink opacity-20 [font-stretch:116%] [transition:opacity_.5s_var(--e-out),transform_.7s_var(--e-out),color_.4s] group-[.on]/or:opacity-100 [@media(hover:hover)_and_(min-width:960px)]:group-[.on]/or:[transform:translateX(.2em)]">
                 <i className="mr-[.08em] size-[.26em] flex-none rounded-full bg-blue [transform:scale(0)] [transition:transform_.5s_var(--e-spring)] group-[.on]/or:[transform:none]" />

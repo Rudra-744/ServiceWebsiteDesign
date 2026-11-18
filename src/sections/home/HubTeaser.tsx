@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useNearEffect } from "@/hooks/useNearEffect";
 import { SplitText } from "@/components/motion/SplitText";
 import { Button } from "@/components/ui/Button";
 import { addMeasure, engine } from "@/lib/engine";
@@ -118,7 +119,7 @@ export function HubTeaser() {
     time();
   };
 
-  useEffect(() => {
+  useNearEffect(sec, () => {
     const st = S.current, root = sec.current!, hc = q(".hc"), grid = q(".hc-grid"), btn = q(".hc-play"), wave = q(".hc-wave");
     // the 360° city strip, drawn once (twice side by side so it loops) and copied into every headset screen
     const off = document.createElement("canvas");
@@ -168,8 +169,7 @@ export function HubTeaser() {
       btn.removeEventListener("click", click);
       clearTimeout(st.pt);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only wiring; helpers read refs
-  }, []);
+  });
 
   useScrollScene(sec, (p) => {
     const st = S.current, mobile = innerWidth < 820;

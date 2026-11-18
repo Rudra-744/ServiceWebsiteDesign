@@ -1,5 +1,6 @@
 "use client";
-import { type CSSProperties, useEffect, useRef } from "react";
+import { type CSSProperties, useRef } from "react";
+import { useNearEffect } from "@/hooks/useNearEffect";
 import { SplitText } from "@/components/motion/SplitText";
 import { Button } from "@/components/ui/Button";
 import { addMeasure, engine } from "@/lib/engine";
@@ -18,7 +19,7 @@ export function FinalCta() {
   const sec = useRef<HTMLElement>(null);
   const T = useRef({ vis: false, p: 0, cur: -2, px: 0, py: 0, tpx: 0, tpy: 0, open: false, W: 0, H: 0, R: 0, diag: 0, dpr: 1, rings: [] as Ring[], chips: [] as { t: string; z: number; a: number; r: number }[], portalZ: 0, c0: 0, c1: 0 });
 
-  useEffect(() => {
+  useNearEffect(sec, () => {
     const st = T.current, root = sec.current!, cv = root.querySelector<HTMLCanvasElement>(".tun-cv")!;
     st.rings = [];
     let z = 0, n = 0;
@@ -53,7 +54,7 @@ export function FinalCta() {
       root.removeEventListener("pointermove", move);
       offM();
     };
-  }, []);
+  });
 
   useScrollScene(sec, (p) => (T.current.p = p));
 

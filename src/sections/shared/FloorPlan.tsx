@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useId, useRef } from "react";
+import { useId, useRef } from "react";
+import { useNearEffect } from "@/hooks/useNearEffect";
 import { E, clamp, lerp, map } from "@/lib/motion";
 import { planSVG } from "@/lib/plan";
 import { useScrollScene } from "@/hooks/useScrollScene";
@@ -12,14 +13,14 @@ export function FloorPlan({ nav, tag, title, lede, steps, label }: Props) {
   const id = useId().replace(/[^a-z0-9]/gi, "");
   const S = useRef({ walls: [] as [SVGPathElement, number][], cur: -1 });
 
-  useEffect(() => {
+  useNearEffect(sec, () => {
     S.current.walls = [...sec.current!.querySelectorAll<SVGPathElement>(".wall")].map((w) => {
       const L = w.getTotalLength();
       w.style.strokeDasharray = String(L);
       w.style.strokeDashoffset = String(L);
       return [w, L];
     });
-  }, []);
+  });
 
   useScrollScene(sec, (p) => {
     const root = sec.current!, vis = root.querySelector(".plan-vis")!;
