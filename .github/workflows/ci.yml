@@ -68,13 +68,13 @@ jobs:
           name: next-build
           path: .next
       # performance budgets warn (runner speed varies); accessibility, best practices, SEO and CLS fail the build
-      # collect and save the reports first, print the scores, then assert (autorun asserts before saving, so a failure left nothing to read)
+      # collect, print the scores, then assert (autorun would stop at a failed assertion, and the scores are what we need to read)
       - run: npx -y @lhci/cli@0.16.1 collect
-      - run: npx -y @lhci/cli@0.16.1 upload
       - run: node scripts/lhci-summary.mjs
       - run: npx -y @lhci/cli@0.16.1 assert
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: lighthouse-reports
-          path: lhci-reports
+          path: .lighthouseci
+          include-hidden-files: true

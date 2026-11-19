@@ -1,8 +1,8 @@
-// Prints the median Lighthouse scores per URL from the reports `lhci autorun` wrote to lhci-reports/,
+// Prints the median Lighthouse scores per URL from the reports `lhci collect` wrote to .lighthouseci/,
 // as workflow notices (readable without downloading the artifact) and in the job summary.
 import { appendFileSync, readdirSync, readFileSync } from "node:fs";
 
-const DIR = "lhci-reports";
+const DIR = ".lighthouseci";
 const med = (a) => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)];
 const byUrl = new Map();
 for (const f of readdirSync(DIR).filter((f) => /^lhr-.*\.json$/.test(f))) {
@@ -14,6 +14,7 @@ for (const f of readdirSync(DIR).filter((f) => /^lhr-.*\.json$/.test(f))) {
     tbt: a["total-blocking-time"].numericValue, lcp: a["largest-contentful-paint"].numericValue, cls: a["cumulative-layout-shift"].numericValue,
   });
 }
+console.log(`::notice title=Lighthouse reports::${byUrl.size} pages found in ${DIR}`);
 let md = "| page | runs | perf | a11y | best practices | SEO | TBT ms | LCP s | CLS |\n|---|---|---|---|---|---|---|---|---|\n";
 for (const [path, rs] of byUrl) {
   const m = (k) => med(rs.map((r) => r[k]));
