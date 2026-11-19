@@ -82,7 +82,14 @@ export function releaseReveals(gap = 70) {
 /** arm every reveal element inside `root` (called when a page mounts). Pages re-mount on navigation, so nothing
  *  carries `.in` over; manual elements (hero intro) may already have been revealed by their own effect. */
 export function armReveals(root: ParentNode) {
-  const o = observer();
+  const o = observer(), html = document.documentElement;
+  // first load: html.booted already revealed the first section in CSS; make it permanent with .in and hand back to
+  // the observer (later page mounts keep the normal held-reveal cascade). The flag stops a late boot frame re-adding it.
+  (window as { __cyArmed?: boolean }).__cyArmed = true;
+  if (html.classList.contains("booted")) {
+    root.querySelectorAll(".page > :first-child :is([data-split],[data-reveal]):not([data-manual]), .page > :first-child:is([data-split],[data-reveal]):not([data-manual])").forEach(reveal);
+    html.classList.remove("booted");
+  }
   root.querySelectorAll("[data-split],[data-reveal]").forEach((el) => {
     if (!el.hasAttribute("data-manual") && !el.classList.contains("in")) o.observe(el);
   });

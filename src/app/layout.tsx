@@ -27,6 +27,9 @@ export const viewport: Viewport = { themeColor: "#ffffff" };
 // with reduced motion, Save-Data or a 2G/slow-2G connection.
 const FLAGS = `try{var d=document.documentElement,c=d.classList,rm=matchMedia("(prefers-reduced-motion: reduce)").matches;c.add(rm?"rm":"motion");if(matchMedia("(hover: hover) and (pointer: fine)").matches)c.add("fine");var n=navigator.connection,slow=!!n&&(n.saveData||/2g/.test(n.effectiveType||"")),phone=matchMedia("(hover: none), (max-width: 819px)").matches;if(rm||slow||phone||sessionStorage.getItem("cy-pre"))c.add("pre-skip");else{c.add("preloading");d.style.overflow="hidden"}}catch(e){}`;
 
+// Without the loader: two frames after first paint, html.booted reveals the first section (no wait for hydration).
+const BOOT = `try{var c=document.documentElement.classList;if(!c.contains("preloading"))requestAnimationFrame(function(){requestAnimationFrame(function(){if(!window.__cyArmed)c.add("booted")})})}catch(e){}`;
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en-IN" className={archivo.variable} suppressHydrationWarning>
@@ -45,6 +48,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Nav />
           <Menu />
           <main id="main">{children}</main>
+          {/* parsed before the app scripts run: one frame after first paint, reveal the first section (see the `in` variant) */}
+          <script dangerouslySetInnerHTML={{ __html: BOOT }} />
           <Footer />
         </Providers>
       </body>

@@ -13,7 +13,6 @@ export const metadata = pageMetadata("video", "360° video production");
 export default function Page() {
   return (
     <div className="page" data-page="video">
-      <JsonLd data={pageGraph("video", "360° video production")} />
       <PageIntro page="video">
         <Pano />
       </PageIntro>
@@ -24,6 +23,7 @@ export default function Page() {
       <Faq items={FAQS.video!} />
       <CtaBand title="Got a place worth seeing?" text="Tell us where it is and who should see it. We'll plan the shoot." label="Create your 360° video" service="360° video" />
       <NextPage to="real-estate" />
+      <JsonLd data={pageGraph("video", "360° video production")} />
     </div>
   );
 }

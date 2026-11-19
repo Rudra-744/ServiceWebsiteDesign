@@ -16,7 +16,6 @@ export const metadata = pageMetadata("events", "VR events & experiences");
 export default function Page() {
   return (
     <div className="page" data-page="events">
-      <JsonLd data={pageGraph("events", "VR events and experiences")} />
       <EventsHero />
       <section data-nav="Why it works" className="wrap py-[clamp(90px,13vw,200px)]">
         <ScrubWords parts={["Cyphon helps event organisers create experiences that entertain audiences and leave a lasting impression."]} />
@@ -28,6 +27,7 @@ export default function Page() {
       <Faq items={FAQS.events!} ask={{ lead: "Planning something different?", label: "Tell us about it", service: "VR event" }} />
       <CtaBand title="Have a date in mind?" text="Tell us about the venue and your guests and we'll suggest an experience that fits." label="Plan your VR event" service="VR event" quest />
       <NextPage to="video" />
+      <JsonLd data={pageGraph("events", "VR events and experiences")} />
     </div>
   );
 }

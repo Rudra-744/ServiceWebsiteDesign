@@ -22,7 +22,6 @@ const STEPS = [
 export default function Page() {
   return (
     <div className="page" data-page="real-estate">
-      <JsonLd data={pageGraph("real-estate", "Real estate VR (virtual sample house)")} />
       <PageIntro page="real-estate">
         <GrowMedia />
       </PageIntro>
@@ -33,6 +32,7 @@ export default function Page() {
       <Faq items={FAQS["real-estate"]!} />
       <CtaBand title="Launching a project soon?" text="Send us your plans and we'll show you what buyers will see." label="Create your virtual sample house" service="Real estate VR" />
       <NextPage to="vr-hub" />
+      <JsonLd data={pageGraph("real-estate", "Real estate VR (virtual sample house)")} />
     </div>
   );
 }

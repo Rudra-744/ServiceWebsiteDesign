@@ -1,14 +1,15 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import { type ReactNode, useEffect } from "react";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { scrollTrigger } from "@/lib/gsap";
+import { addTick } from "@/lib/ticker";
 import { initEngine, measureAll } from "@/lib/engine";
 import { startLenis, stopLenis } from "@/lib/scroll";
 import { armReveals } from "@/lib/reveal";
 import { LEGACY_HASH } from "@/content/site";
 import { TransitionProvider } from "./TransitionProvider";
 
-// Engine boot: shared state, Lenis (mouse only) driven by gsap.ticker and synced to ScrollTrigger,
+// Engine boot: shared state, Lenis (mouse only) driven by the shared frame loop and synced to ScrollTrigger,
 // reveals armed and layout re-measured whenever a page mounts.
 export function Providers({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -17,19 +18,18 @@ export function Providers({ children }: { children: ReactNode }) {
   useEffect(() => {
     initEngine();
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-    const lenis = startLenis();
-    let tick: ((t: number) => void) | null = null;
-    if (lenis) {
-      lenis.on("scroll", ScrollTrigger.update);
-      tick = (t: number) => lenis.raf(t * 1000);
-      gsap.ticker.add(tick);
-      gsap.ticker.lagSmoothing(0);
-    }
+    let offTick: (() => void) | null = null, alive = true;
+    startLenis().then((lenis) => {
+      if (!lenis || !alive) return;
+      lenis.on("scroll", () => scrollTrigger()?.update());
+      offTick = addTick((now) => lenis.raf(now));
+    });
     // the static site used /#rental style links: send them to the real page
     const h = location.hash.slice(1);
     if (location.pathname === "/" && LEGACY_HASH[h] && LEGACY_HASH[h] !== "/") router.replace(LEGACY_HASH[h]);
     return () => {
-      if (tick) gsap.ticker.remove(tick);
+      alive = false;
+      offTick?.();
       stopLenis();
     };
   }, [router]);

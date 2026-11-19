@@ -22,8 +22,15 @@
     @slot;
   }
 }
-/* revealed: the element or an ancestor got `.in` (only meaningful with motion; outranks `motion:`) */
-@custom-variant in (.motion &:is(.in, .in *));
+/* revealed: the element or an ancestor got `.in` (only meaningful with motion; outranks `motion:`).
+   html.booted (set one frame after first paint by the script at the end of <body>) also reveals the page's first
+   section without waiting for hydration, so above-the-fold content paints right away (LCP); armReveals then gives
+   those elements .in and removes .booted. */
+@custom-variant in {
+  .motion &:is(.in, .in *) { @slot; }
+  .motion.booted .page > :first-child &:is([data-reveal], [data-split]):not([data-manual]) { @slot; }
+  .motion.booted .page > :first-child :is([data-reveal], [data-split]):not([data-manual]) & { @slot; }
+}
 
 /* ---------- tokens ---------- */
 @theme {
@@ -157,39 +164,45 @@
 /* split headline letters rise from the mask when the element gets .in; .out/.quick for runtime swaps */
 @utility split-rise {
   .motion & .c { display: inline-block; transform: translate3d(0, 108%, 0); transition: transform 1.05s var(--e-out); transition-delay: calc(var(--d, 0s) + var(--i) * 16ms); }
-  .motion &.in .c { transform: none; }
+  .motion &.in .c, .motion.booted .page > :first-child &[data-split]:not([data-manual]) .c { transform: none; }
   .motion &.out .c { transform: translate3d(0, -108%, 0); transition: transform 0.34s cubic-bezier(0.55, 0, 0.8, 0.2) calc(var(--i) * 5ms); }
   .motion &.quick .c { transition-duration: 0.8s; transition-delay: calc(var(--i) * 10ms); }
 }
 @utility rv {
   .motion & { opacity: 0; transform: translate3d(0, 28px, 0); transition: opacity 1s var(--e-out), transform 1.2s var(--e-out); transition-delay: var(--d, 0s); }
-  .motion &:is(.in, .in *) { opacity: 1; transform: none; }
+  .motion &:is(.in, .in *), .motion.booted .page > :first-child &:is([data-reveal], [data-split]):not([data-manual]), .motion.booted .page > :first-child :is([data-reveal], [data-split]):not([data-manual]) & { opacity: 1; transform: none; }
+  /* phones: the first section shows at once (an opacity fade on the LCP element delays LCP by the whole fade) */
+  @media (max-width: 819px) { .motion .page > :first-child &:not([data-manual], [data-manual] *) { opacity: 1; transform: none; transition: none; } }
 }
 @utility fade {
   .motion & { opacity: 0; transition: opacity 1.2s var(--e-out); transition-delay: var(--d, 0.15s); }
-  .motion &:is(.in, .in *) { opacity: 1; }
+  .motion &:is(.in, .in *), .motion.booted .page > :first-child &:is([data-reveal], [data-split]):not([data-manual]), .motion.booted .page > :first-child :is([data-reveal], [data-split]):not([data-manual]) & { opacity: 1; }
+  /* phones: the first section shows at once (an opacity fade on the LCP element delays LCP by the whole fade) */
+  @media (max-width: 819px) { .motion .page > :first-child &:not([data-manual], [data-manual] *) { opacity: 1; transform: none; transition: none; } }
 }
 @utility pop {
   .motion & { opacity: 0; transform: translate3d(0, 24px, 0) scale(0.82); transition: opacity 0.45s var(--e-out), transform 0.8s var(--e-spring); transition-delay: calc(var(--d, 0s) + var(--i, 0) * 65ms); }
-  .motion &:is(.in, .in *) { opacity: 1; transform: none; }
+  .motion &:is(.in, .in *), .motion.booted .page > :first-child &:is([data-reveal], [data-split]):not([data-manual]), .motion.booted .page > :first-child :is([data-reveal], [data-split]):not([data-manual]) & { opacity: 1; transform: none; }
+  /* phones: the first section shows at once (an opacity fade on the LCP element delays LCP by the whole fade) */
+  @media (max-width: 819px) { .motion .page > :first-child &:not([data-manual], [data-manual] *) { opacity: 1; transform: none; transition: none; } }
 }
 @utility clip {
   .motion & { clip-path: inset(100% 0 0 0); transition: clip-path 1.35s var(--e-io); transition-delay: var(--d, 0s); }
   .motion & img { transform: scale(1.25); transition: transform 1.8s var(--e-out); transition-delay: var(--d, 0s); }
-  .motion &.in { clip-path: inset(0 0 0 0 round 0); }
-  .motion &.in img { transform: none; }
+  .motion &.in, .motion.booted .page > :first-child &:is([data-reveal], [data-split]):not([data-manual]) { clip-path: inset(0 0 0 0 round 0); }
+  .motion &.in img, .motion.booted .page > :first-child &:is([data-reveal], [data-split]):not([data-manual]) img { transform: none; }
 }
-@utility clip-l { .motion &:not(.in) { clip-path: inset(0 100% 0 0); } }
-@utility clip-r { .motion &:not(.in) { clip-path: inset(0 0 0 100%); } }
-@utility clip-t { .motion &:not(.in) { clip-path: inset(0 0 100% 0); } }
-@utility clip-c { .motion &:not(.in) { clip-path: inset(50% 50% 50% 50% round 24px); } }
+@utility clip-l { .motion &:not(.in):not(.motion.booted .page > :first-child *) { clip-path: inset(0 100% 0 0); } }
+@utility clip-r { .motion &:not(.in):not(.motion.booted .page > :first-child *) { clip-path: inset(0 0 0 100%); } }
+@utility clip-t { .motion &:not(.in):not(.motion.booted .page > :first-child *) { clip-path: inset(0 0 100% 0); } }
+@utility clip-c { .motion &:not(.in):not(.motion.booted .page > :first-child *) { clip-path: inset(50% 50% 50% 50% round 24px); } }
 /* 1px rule that draws from the left */
 @utility rule {
   height: 1px;
   background: var(--color-line);
   transform-origin: left;
   .motion & { transform: scaleX(0); transition: transform 1.4s var(--e-out); transition-delay: var(--d, 0s); }
-  .motion &:is(.in, .in *) { transform: none; }
+  .motion &:is(.in, .in *), .motion.booted .page > :first-child &:is([data-reveal], [data-split]):not([data-manual]), .motion.booted .page > :first-child :is([data-reveal], [data-split]):not([data-manual]) & { transform: none; }
 }
 
 /* page morph / loader landing: the target element is shown in its finished state (added by JS to any element) */

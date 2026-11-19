@@ -18,7 +18,6 @@ export const metadata = pageMetadata("vr-hub", "VR HUB");
 export default function Page() {
   return (
     <div className="page" data-page="vr-hub">
-      <JsonLd data={pageGraph("vr-hub", "VR HUB", "SoftwareApplication")} />
       <HubHero />
       <Strike />
       <Platform />
@@ -39,6 +38,7 @@ export default function Page() {
         </div>
         <small className="text-[14px] text-muted">Interface visuals on this page are illustrative.</small>
       </section>
+      <JsonLd data={pageGraph("vr-hub", "VR HUB", "SoftwareApplication")} />
     </div>
   );
 }

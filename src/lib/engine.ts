@@ -1,5 +1,6 @@
 "use client";
-import { ScrollTrigger, gsap } from "./gsap";
+import { scrollTrigger } from "./gsap";
+import { addTick } from "./ticker";
 // Shared client state for the motion engine (reference site.js globals: RM, FINE, vw, vh, menuOpen, PRE.cover, busy).
 // One module-level object, so every canvas loop can check "is something covering the page?" without React re-renders.
 
@@ -63,7 +64,7 @@ export function measureAll() {
     }
   });
   // measures can change section heights (services track): scroll scenes re-read their positions
-  ScrollTrigger.refresh();
+  scrollTrigger()?.refresh();
 }
 
 /** load, font, resize and height-change triggers coalesce into one re-measure (each run forces a full layout) */
@@ -106,13 +107,9 @@ export function initEngine() {
   }).observe(document.body);
   // runs first on every frame, so per-frame code reads a cached scroll position instead of forcing layout mid-frame
   engine.y = scrollY;
-  gsap.ticker.add(
-    () => {
-      engine.y = scrollY;
-    },
-    false,
-    true,
-  );
+  addTick(() => {
+    engine.y = scrollY;
+  }, true);
 }
 
 // flags must be known before any component effect reads them

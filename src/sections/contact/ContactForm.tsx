@@ -37,7 +37,6 @@ export function ContactForm({ service = "", note = "" }: { service?: string; not
     <form
       action={action}
       noValidate
-      data-reveal=""
       data-morph-to=""
       className="grid gap-[18px] rounded-stage bg-card p-[clamp(22px,3vw,44px)]"
       onSubmit={(e) => {

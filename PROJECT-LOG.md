@@ -103,8 +103,8 @@ Exact values come from `ANIMATION-SPEC.md` and the reference code; when they dis
 
 | # | Issue | Found | Status |
 |---|---|---|---|
-| 2 | Home hero photo (LCP) paints late on slow phones: 1.1–7.6 s on a 4× throttled phone, ~3.5 s render delay in Lighthouse; Performance median 76 (target 95). | Stage 5 | Open: investigate in stage 7 (main-thread work before first paint). |
-| 1 | Back navigation while scrolled to the bottom showed a white footer area for ~0.6 s (the freeze cloned only `<main>`). | Stage 2 | Fixed 2026-11-16 (footer cloned into the freeze). Re-check in the final audit. |
+| 2 | Home performance on mobile: local Lighthouse median 46 under machine load; Home TBT 5.7 s median in the stage-7 A/B. Inner-page LCP fixed in stage 7. | Stage 5 | Open: confirm on the CI runner; next lever is deferring Home section hydration. |
+| 1 | Back navigation while scrolled to the bottom showed a white footer area for ~0.6 s (the freeze cloned only `<main>`). | Stage 2 | Closed 2026-11-19 (re-checked in stage 7). |
 
 ---
 
@@ -433,3 +433,77 @@ Performance swings by about 40 points between identical runs on this machine. TB
 - The layout file in this commit also carries the phone preloader skip described in the entry above.
 
 **Revert**: `git revert` this commit.
+
+---
+
+## Stage 7 — 2026-11-19: performance pass, tests, CI, README, known-issues re-check
+
+### Performance
+
+**Analysis.**
+- **Tool:** Next 16 builds with Turbopack, which `@next/bundle-analyzer` (Webpack only) cannot read, so the built-in `next analyze` was used.
+- **Rental's initial client JS:** 550 KB compressed. The biggest parts:
+  - fonts 206 KB (3 Archivo files: one preloaded for the first paint, the others only for characters outside it)
+  - Next client 74 KB, react-dom 64 KB, GSAP 44 KB, Next build runtime 39 KB
+  - `globals.css` 32 KB, Lenis 5 KB, cursor 1.2 KB
+- **Rental trace:**
+  - LCP was the hero lede with **3.8 s render delay**. Reveal elements stay at opacity 0 until hydration arms the observer, then fade in over 1.2 s.
+  - The long tasks were the HTML parse, the main chunk, layout and style.
+
+**Changes.**
+1. **First section without waiting for JavaScript:**
+   - The script at the end of `<body>` sets `html.booted` two frames after first paint. The reveal variant and utilities reveal the page's first section on it.
+   - `armReveals` then gives those elements `.in` and removes `booted`.
+   - On phones the first section's opacity reveals are skipped entirely, because an opacity fade on the LCP element delays LCP by the whole fade.
+   - Real LCP on a 4× throttled phone dropped from 2.3–2.9 s to 0.27–0.74 s on every inner page.
+2. **JSON-LD moved to the end of each page,** so the LCP text arrives earlier in the HTML stream.
+3. **GSAP + ScrollTrigger load on demand,** with the first scroll scene that comes near (`lib/gsap.ts`).
+   - The frame loop is now `lib/ticker.ts` (a small rAF loop replacing `gsap.ticker`).
+   - Contact, privacy and terms never download GSAP.
+4. **Lenis loads on demand,** on mouse devices only (`startLenis` is async); touch devices never download it.
+5. **Initial JS** (compressed): Rental 550 → 501 KB, Home 571 → 522 KB, Contact 530 → 481 KB.
+   - The rest is fonts and the Next/React runtime.
+   - Cursor (1.2 KB) and the menu previews (3.9 KB, needed on the first menu open) were left in: deferring them would not change the score.
+6. **Fonts:** next/font self-hosts Archivo with `display: swap` and preloads only the subset the first paint needs. Nothing changed.
+7. **Hero photo:** already `loading="eager"` + `fetchPriority="high"` (the Next 16 replacement for `priority`), served as AVIF/WebP through next/image with phone-sized `sizes` (82vw). Nothing blocks it.
+   - On phones, Lighthouse picks the photo or the headline (both paint at about the same time).
+   - Making the headline the explicit LCP was not needed: the observed LCP is under 0.7 s.
+
+**Lighthouse mobile (local, `lighthouse@12`, simulated 4× CPU / slow 4G), interleaved A/B on the same machine at the same time** (3 runs each):
+
+| Page | Before (stage 6) | After | Median LCP before → after | Median TBT before → after |
+|---|---|---|---|---|
+| Home | 47 / 49 / 52 → median **49** | 46 / 47 / 46 → median **46** | 4.6 → 4.4 s | 2.8 → 5.7 s |
+| Headset rental | 47 / 46 / 46 → median **46** | 56 / 51 / 52 → median **52** | 4.9 → 3.8 s | 2.8 → 3.2 s |
+
+**Honest summary: the targets (inner 90+, Home 85+) are not met on this machine.**
+- **Noise:** this PC runs a browser with ~40 processes, an IDE and other agents. Every run contains "Unattributable" main-thread stalls of 0.5–6.7 s that are not this site's work.
+  - In a quieter window before these changes, single runs reached Rental 87–91 and Home 87.
+  - Under the current load the same build scores in the 40s–50s.
+- **What the A/B does show:** inner-page LCP improves (Rental 4.9 → 3.8 s, observed LCP < 0.7 s).
+- **Home TBT regression:** the A/B shows Home TBT got worse (2.8 → 5.7 s median), so Home is listed as an open issue.
+- **Reference figure:** the CI Lighthouse job on a clean GitHub runner (below) gives the number to quote.
+
+### Tests, CI, tooling
+
+- **Playwright** (`playwright.config.ts`, `tests/e2e/`): desktop 1440×900 and Pixel 7. Runs against the production build, 2 workers. Covers:
+  - every page loads with no console errors and its first section revealed
+  - next-page morph, menu open/close
+  - every Home section reveals when reached directly; hero tabs; fleet counter 200; walkthrough room
+  - contact pre-fill, validation and preview submit; honeypot hidden
+  - security headers; robots, sitemap, llms.txt; canonical, share image and JSON-LD
+  - Result: **29 passed, 5 skipped** (viewport-independent checks run once), 0 failed.
+  - Fixes found: the contact form carried a leftover `data-reveal` with no animation (removed); the menu test now checks `body.menu-open`.
+- **Husky** pre-commit hook: lint + type check.
+- **Lighthouse CI** (`lighthouserc.json`):
+  - 7 pages × 3 runs, median.
+  - Fails the build below 0.90 accessibility, 0.95 best practices, 0.95 SEO, or above 0.1 CLS.
+  - Performance budgets warn only (Home 85, inner pages 90), because runner speed varies.
+- **GitHub Actions** (`.github/workflows/ci.yml`): lint, type check, the enquiry self-check, build → Playwright and Lighthouse CI.
+- **README:** setup, environment variables, scripts, layout, how the motion works, CI and deploying.
+
+### Known issues re-check
+
+- **#1 footer flash on back navigation:** re-checked with frame captures during the back morph. The footer stays dark under the morph; there is no white area. **Closed.**
+- **New, fixed:** back navigation landed mid-page (Rental restored about 3,000 px too high). Lenis still held the previous page's height as its scroll limit, so `scrollToY` now calls `lenis.resize()` first. The restored position is now within 181 px of the saved one.
+- **#2 Home performance:** still open (see above).

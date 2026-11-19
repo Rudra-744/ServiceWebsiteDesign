@@ -18,7 +18,6 @@ export const metadata = pageMetadata("rental", "VR headset rental");
 export default function Page() {
   return (
     <div className="page" data-page="rental">
-      <JsonLd data={pageGraph("rental", "VR headset rental")} />
       <RentalHero />
       <FillWords nav="How it works" text="You pick the date and the headcount. We bring the headsets, set them up, run them with your guests and pack everything away after." />
       <Planner />
@@ -30,6 +29,7 @@ export default function Page() {
       <Faq items={FAQS.rental!} ask={{ lead: "Something else on your mind?", label: "Ask us directly", service: "Headset rental" }} />
       <CtaBand title="Planning an event or training day?" text="Share the date, venue and headcount and we'll put together a rental plan." label="Rent VR headsets" service="Headset rental" quest />
       <NextPage to="events" />
+      <JsonLd data={pageGraph("rental", "VR headset rental")} />
     </div>
   );
 }
