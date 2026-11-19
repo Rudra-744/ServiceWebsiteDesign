@@ -69,8 +69,10 @@ jobs:
           path: .next
       # performance budgets warn (runner speed varies); accessibility, best practices, SEO and CLS fail the build
       - run: npx -y @lhci/cli@0.16.1 autorun
+      - run: node scripts/lhci-summary.mjs
+        if: always()
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: lighthouse-reports
-          path: .lighthouseci
+          path: lhci-reports

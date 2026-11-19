@@ -36,6 +36,6 @@
         }
       ]
     },
-    "upload": { "target": "filesystem", "outputDir": ".lighthouseci" }
+    "upload": { "target": "filesystem", "outputDir": "lhci-reports" }
   }
 }
