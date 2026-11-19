@@ -1,5 +1,6 @@
 "use client";
 import { Fragment, useRef } from "react";
+import Image from "next/image";
 import { E, clamp } from "@/lib/motion";
 import { useScrollScene } from "@/hooks/useScrollScene";
 
@@ -38,8 +39,8 @@ export function ScrubWords({ parts, className = MANI }: { parts: (string | { img
           </Fragment>
         ) : (
           <Fragment key={n}>
-            {/* eslint-disable-next-line @next/next/no-img-element -- decorative 2.6em pill, smaller than next/image's smallest size */}
-            <span className="ipill relative mx-[.12em] -mt-[.1em] inline-block h-[.82em] w-0 overflow-hidden rounded-full bg-blue-soft align-middle rm:w-[2.2em]"><img className="h-full w-[2.6em] max-w-none object-cover" src={part.img} alt="" loading="lazy" /></span>{" "}
+            {/* decorative pill, 2.6em wide (78–192 px): a small optimised image, not the full photo */}
+            <span className="ipill relative mx-[.12em] -mt-[.1em] inline-block h-[.82em] w-0 overflow-hidden rounded-full bg-blue-soft align-middle rm:w-[2.2em]"><Image className="h-full w-[2.6em] max-w-none object-cover" src={part.img} alt="" width={192} height={60} sizes="(max-width: 697px) 78px, (max-width: 1721px) 11.2vw, 192px" /></span>{" "}
           </Fragment>
         ),
       )}
