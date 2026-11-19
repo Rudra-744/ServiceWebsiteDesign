@@ -75,14 +75,14 @@ jobs:
       - name: LCP nodes
         continue-on-error: true
         run: |
-          npm i --no-save --no-audit --no-fund lighthouse@12
-          npx next start -p 3100 &
+          npm i --no-save --no-audit --no-fund lighthouse@12 > lcp-log.txt 2>&1
+          npx next start -p 3100 > /dev/null 2>&1 &
           sleep 6
           for p in real-estate-vr vr-headset-rental ""; do
-            npx lighthouse "http://localhost:3100/$p" --quiet --chrome-flags="--headless=new --no-sandbox" -G ".lh-gather" --only-categories=performance
-            node scripts/lcp-nodes.mjs .lh-gather "${p:-home}"
+            { npx lighthouse "http://localhost:3100/$p" --quiet --chrome-flags="--headless=new --no-sandbox" -G ".lh-gather" --only-categories=performance               && node scripts/lcp-nodes.mjs .lh-gather "${p:-home}"; } 2>&1 | tail -4 | cut -c1-900 >> lcp-log.txt
           done
           kill %1 || true
+          grep "::warning" lcp-log.txt || tail -6 lcp-log.txt | while read -r l; do echo "::warning title=LCP nodes log::$l"; done
       # keep LHCI's verdict readable from the run page: failed lines become annotations
       - run: |
           set +e
