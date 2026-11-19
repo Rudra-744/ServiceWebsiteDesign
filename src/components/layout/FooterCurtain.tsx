@@ -6,6 +6,7 @@ import { useTicker } from "@/hooks/useTicker";
 
 // Footer curtain (ANIMATION-SPEC G12): fixed under <main>, uncovered at the end of the page.
 // Becomes static when taller than 92% of the viewport. The giant word rises once 55% of it is uncovered.
+// Hidden until the first measure (`rdy`): while the HTML is still being parsed the fixed footer is only padding tall, and its growth would count as a layout shift.
 export function FooterCurtain({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLElement>(null);
   const h = useRef(0);
@@ -16,6 +17,7 @@ export function FooterCurtain({ children }: { children: ReactNode }) {
       addMeasure(() => {
         const foot = ref.current!, main = document.getElementById("main")!;
         foot.classList.remove("is-static");
+        foot.classList.add("rdy");
         h.current = foot.offsetHeight;
         if (h.current > innerHeight * 0.92) {
           foot.classList.add("is-static");
@@ -32,7 +34,7 @@ export function FooterCurtain({ children }: { children: ReactNode }) {
   });
 
   return (
-    <footer ref={ref} className="foot group/foot fixed inset-x-0 bottom-0 z-1 bg-ink px-(--pad) pt-[clamp(48px,6vw,88px)] pb-6 text-[#f2f2f4] [&.is-static]:relative">
+    <footer ref={ref} className="foot group/foot fixed inset-x-0 bottom-0 z-1 bg-ink px-(--pad) pt-[clamp(48px,6vw,88px)] pb-6 text-[#f2f2f4] [&.is-static]:relative motion:invisible motion:[&.rdy]:visible">
       {children}
     </footer>
   );
