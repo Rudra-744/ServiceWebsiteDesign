@@ -50,7 +50,7 @@ export function FloorPlan({ nav, tag, title, lede, steps, label }: Props) {
   });
 
   return (
-    <section ref={sec} data-nav={nav} className="plan-sec wrap relative h-[420vh] max-[960px]:h-[400vh]" aria-label={label}>
+    <section ref={sec} data-nav={nav} className="plan-sec cv wrap relative h-[420vh] max-[960px]:h-[400vh]" aria-label={label}>
       <div className="sticky top-0 grid h-svh grid-cols-1 grid-rows-[auto_1fr] gap-3 overflow-hidden pt-[calc(var(--nav-h)+28px)] pb-5 min-[960px]:grid-cols-[1fr_1.1fr] min-[960px]:grid-rows-1 min-[960px]:items-center min-[960px]:gap-[5vw] min-[960px]:pt-(--nav-h)">
         <div>
           <p className="tag">{tag}</p>

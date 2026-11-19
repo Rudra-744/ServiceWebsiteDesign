@@ -155,7 +155,7 @@ export function Tour({ style }: { style?: CSSProperties }) {
 
   const s0 = TOUR_STOPS[0];
   return (
-    <section ref={sec} data-nav="Walkthrough" className="tour relative h-[520vh] max-[820px]:h-[500vh]" aria-label="Virtual walkthrough of a sample apartment" style={style}>
+    <section ref={sec} data-nav="Walkthrough" className="tour cv relative h-[520vh] max-[820px]:h-[500vh]" aria-label="Virtual walkthrough of a sample apartment" style={style}>
       <div className="sticky top-0 isolate h-svh overflow-hidden bg-[#c9daff]">
         <canvas className="tour-cv absolute inset-0 block size-full cursor-grab touch-pan-y [&.drag]:cursor-grabbing" aria-hidden="true" />
         <div className="tour-hots">

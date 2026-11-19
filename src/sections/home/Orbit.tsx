@@ -158,7 +158,7 @@ export function Orbit() {
 
   const d0 = ORBIT[0];
   return (
-    <section ref={sec} data-nav="Who we work with" className="orb relative h-[360vh] max-[900px]:h-[330vh]" aria-label="Who we work with">
+    <section ref={sec} data-nav="Who we work with" className="orb cv relative h-[360vh] max-[900px]:h-[330vh]" aria-label="Who we work with">
       <div className="wrap sticky top-0 grid h-svh grid-rows-[auto_1fr_auto] overflow-hidden pt-[calc(var(--nav-h)+clamp(28px,4vw,56px))] pb-[clamp(20px,3.4vw,44px)]">
         <div className="relative z-6 flex items-end justify-between gap-5">
           <SplitText as="h2" className="d2" text="Who we work with." />

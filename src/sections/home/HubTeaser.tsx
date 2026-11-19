@@ -192,7 +192,7 @@ export function HubTeaser() {
   });
 
   return (
-    <section data-nav="VR HUB" className="relative h-[340vh] max-[959px]:h-[320vh]" aria-label="VR HUB" ref={sec}>
+    <section data-nav="VR HUB" className="cv relative h-[340vh] max-[959px]:h-[320vh]" aria-label="VR HUB" ref={sec}>
       <div className="sticky top-0 h-svh overflow-hidden">
         <div className="hubt-panel absolute inset-0 grid content-center gap-8 bg-blue-soft px-(--pad) pt-[calc(var(--nav-h)+20px)] pb-8 text-ink [clip-path:inset(8vh_4vw_round_40px)] will-change-[clip-path] max-[959px]:content-start max-[959px]:gap-[22px] max-[959px]:pt-[calc(var(--nav-h)+44px)] max-[959px]:[clip-path:inset(6vh_3vw_round_28px)] min-[960px]:grid-cols-[.9fr_1.1fr] min-[960px]:items-center min-[960px]:gap-[5vw]">
           <div>

@@ -69,3 +69,8 @@ jobs:
           path: .next
       # performance budgets warn (runner speed varies); accessibility, best practices, SEO and CLS fail the build
       - run: npx -y @lhci/cli@0.16.1 autorun
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci

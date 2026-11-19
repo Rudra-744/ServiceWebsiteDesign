@@ -218,7 +218,7 @@ export function Planet() {
   });
 
   return (
-    <section data-nav="360° video" className="planet group/pl relative h-[560svh] bg-white max-[899px]:h-[500svh]" data-planet="" aria-label="360° video" ref={sec}>
+    <section data-nav="360° video" className="planet cv group/pl relative h-[560svh] bg-white max-[899px]:h-[500svh]" data-planet="" aria-label="360° video" ref={sec}>
       <div className="sticky top-0 h-svh overflow-hidden">
         <div className="pl-fallback group-[.gl]/pl:hidden absolute inset-x-0 top-1/2 flex h-[46vh] -translate-y-1/2 overflow-hidden [&_svg]:h-full [&_svg]:w-auto [&_svg]:max-w-none [&_svg]:flex-none" aria-hidden="true" dangerouslySetInnerHTML={{ __html: PANO + PANO }} />
         <canvas className="pl-cv absolute inset-0 block size-full touch-pan-y fine:group-[.inside]/pl:cursor-grab group-[.drag]/pl:cursor-grabbing!" aria-hidden="true" />

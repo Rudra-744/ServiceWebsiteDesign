@@ -205,6 +205,8 @@
   .motion &:is(.in, .in *), .motion.booted .page > :first-child &:is([data-reveal], [data-split]):not([data-manual]), .motion.booted .page > :first-child :is([data-reveal], [data-split]):not([data-manual]) & { transform: none; }
 }
 
+/* pinned sections have an explicit height, so skipping their off-screen rendering cannot shift layout */
+@utility cv { content-visibility: auto; }
 /* page morph / loader landing: the target element is shown in its finished state (added by JS to any element) */
 @utility morph-hit { clip-path: none !important; transition: none !important; }
 @utility morph-land {

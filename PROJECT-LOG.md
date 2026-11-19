@@ -507,3 +507,42 @@ Performance swings by about 40 points between identical runs on this machine. TB
 - **#1 footer flash on back navigation:** re-checked with frame captures during the back morph. The footer stays dark under the morph; there is no white area. **Closed.**
 - **New, fixed:** back navigation landed mid-page (Rental restored about 3,000 px too high). Lenis still held the previous page's height as its scroll limit, so `scrollToY` now calls `lenis.resize()` first. The restored position is now within 181 px of the saved one.
 - **#2 Home performance:** still open (see above).
+
+### Home blocking time pass — 2026-11-19 (client request)
+
+Method: Chrome trace (Playwright, 412×823 phone, 4x CPU throttle, production build), 3 runs per build, every main-thread task over 50 ms across the first 12 s. Script: a scratch `tasks.cjs`, not kept in the repo.
+
+**Before** (blocking time = time above 50 ms summed over those tasks; 29–57 long tasks per run):
+
+| run | blocking time | long tasks |
+|---|---|---|
+| 1 | 6019 ms | 45 |
+| 2 | 4449 ms | – |
+| 3 | 6053 ms | – |
+| re-run (same build, busier PC) | 5121 / 8195 / 7537 ms | 43 / 47 / 57 |
+
+Longest tasks, typical run:
+
+| at | duration | what |
+|---|---|---|
+| 4.7 s | 1127 ms | React hydration of the whole Home tree (script 1126 ms, forced style recalculation 320 ms from Preloader/Nav/Menu) |
+| 0.4 s | 784 ms | click/event handler with 608 ms of layout (page boot) |
+| 1.3 s | 633 ms | layout 371 ms + style 240 ms, no script |
+| 2.2–2.7 s | 400–730 ms | animation frames that are nearly all layout and style |
+| 6.3 s | 297 ms | ScrollTrigger creation |
+| 4.4–5.8 s | 130–170 ms | Fleet and Walkthrough chunk evaluation |
+
+Across the long tasks, layout + style came to 3.8–5.0 s, more than script. The DOM has about 3,250 elements; the Planet section alone has 690.
+
+**Change:** one CSS utility, `cv` (`content-visibility: auto`), on the seven pinned sections whose height is fixed in viewport units (hero is left out because it is the first section; Orbit, Fleet, Real estate, Walkthrough, Planet, VR HUB, Final CTA). The browser skips layout, style and paint for them while they are far off screen, and their height cannot change because it is explicit. Sections with content-sized height (Services on phones, Occasions, Why Cyphon, the chips row) were left alone: their height would be a guess until rendered, which risks the layout shift and measure errors that broke "Why Cyphon" before.
+
+**After** (same method): blocking time 3014 / 3369 / 3501 ms, 31–33 long tasks. Layout + style over those tasks fell from about 3.8–5.0 s to 2.4–2.8 s. The longest remaining tasks are hydration at 0.75–0.92 s (one React commit), the first animation frames at 0.4–0.75 s, and ScrollTrigger at 0.15–0.23 s.
+
+**What was not done, and why:**
+- Hydrating lower sections only when visible (client islands). In React 19 that needs a Suspense boundary per section. The earlier attempt left "Why Cyphon" unrevealed because the section's nodes are recreated after the reveal observer attaches. Fixing that needs a MutationObserver re-arm in `lib/reveal.ts`, which is more machinery than the remaining 0.9 s justifies right now. Left as the next step.
+- Canvas and animation setup already waits for the visitor: every lower section uses `useNearEffect` (150% margin), ScrollTrigger and GSAP load with the first scene, WebGL uses dynamic imports and the Quest model and particles load on first interaction or scroll.
+- Per-section chunk splitting is already how the build works (Fleet+Walkthrough, Planet, Final CTA, etc. are separate chunks, visible in the trace).
+
+**Re-checks after the change** (production build): every Home section's reveals and animations at 1440×900 and 390×844, by jumping straight to each section and by scrolling. "Why Cyphon" revealed 4/4 on desktop and 5/5 on phone. The only non-passing lines are the known ones (Services heading on desktop when jumped to; no bar on the phone Services layout; "Get started" uses `data-manual`). Playwright: 29 passed, 5 skipped.
+
+**Lighthouse CI** now writes reports to `.lighthouseci` and uploads them as a build artifact instead of using Google's temporary public storage, so reports of an unreleased site are not published to a third party.

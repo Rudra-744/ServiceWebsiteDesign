@@ -218,7 +218,7 @@ export function FinalCta() {
   });
 
   return (
-    <section data-nav="Get started" className="relative h-[470vh] max-[819px]:h-[430vh]" aria-label="How we work and start a project" ref={sec}>
+    <section data-nav="Get started" className="cv relative h-[470vh] max-[819px]:h-[430vh]" aria-label="How we work and start a project" ref={sec}>
       <div className="sticky top-0 h-svh overflow-hidden bg-paper">
         <canvas className="tun-cv absolute inset-0 block size-full" aria-hidden="true" />
         <ol className="sr-only">
