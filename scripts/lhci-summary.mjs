@@ -23,7 +23,7 @@ for (const f of readdirSync(DIR).filter((f) => /^lhr-.*\.json$/.test(f))) {
 let md = "| page | runs | perf | a11y | best practices | SEO | TBT ms | LCP s | CLS |\n|---|---|---|---|---|---|---|---|---|\n";
 for (const [path, rs] of byUrl) {
   const m = (k) => med(rs.map((r) => r[k]));
-  const row = `${path} | ${rs.length} | ${Math.round(m("perf"))} | ${Math.round(m("a11y"))} | ${Math.round(m("bp"))} | ${Math.round(m("seo"))} | ${Math.round(m("tbt"))} | ${(m("lcp") / 1000).toFixed(1)} | ${m("cls").toFixed(3)}`;
+  const row = `${path} | ${rs.length} | ${Math.round(m("perf"))} | ${Math.round(m("a11y"))} | ${Math.round(m("bp"))} | ${Math.round(m("seo"))} | ${Math.round(m("tbt"))} | ${(m("lcp") / 1000).toFixed(1)} | ${m("cls").toFixed(3)} (worst run ${Math.max(...rs.map((r) => r.cls)).toFixed(3)})`;
   md += `| ${row} |\n`;
   console.log(`::notice title=Lighthouse mobile median::${row}`);
   const mid = [...rs].sort((x, y) => x.lcp - y.lcp)[Math.floor(rs.length / 2)];

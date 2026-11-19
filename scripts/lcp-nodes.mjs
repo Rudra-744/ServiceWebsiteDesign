@@ -14,4 +14,4 @@ const fcp = ev.find((e) => e.name === "firstContentfulPaint"), lcp = ev.filter((
 const scripts = ev.filter((e) => e.name === "EvaluateScript" && e.dur > 0 && e.args?.data?.url?.includes("/_next/")).sort((a, b) => a.ts - b.ts);
 const top = (est) => [...est.nodeTimings.entries()].map(([n, t]) => ({ end: Math.round(t.endTime), what: n.type === "network" ? `${n.request.url.split("/").pop().slice(0, 22)} ${n.request.resourceType}/${n.request.priority}` : `cpu ${Math.round(t.endTime - t.startTime)}ms` })).sort((a, b) => b.end - a.end).slice(0, 4).map((x) => `${x.what}@${x.end}`).join("; ");
 const msg = `LCP sim ${Math.round(r.timing)} (opt ${Math.round(r.optimisticEstimate.timeInMs)}, pess ${Math.round(r.pessimisticEstimate.timeInMs)}) | observed FCP ${T(fcp)} LCP ${T(lcp)} | first script evals at ${scripts.slice(0, 3).map((e) => T(e) + " " + e.args.data.url.split("/").pop().slice(0, 10)).join(", ")} | graph nodes opt ${r.optimisticEstimate.nodeTimings.size} pess ${r.pessimisticEstimate.nodeTimings.size} | latest opt: ${top(r.optimisticEstimate)}`;
-console.log(`::notice title=LCP nodes ${label}::${msg}`);
+console.log(`::warning title=LCP nodes ${label}::${msg}`);
