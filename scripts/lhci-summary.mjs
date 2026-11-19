@@ -20,7 +20,6 @@ for (const f of readdirSync(DIR).filter((f) => /^lhr-.*\.json$/.test(f))) {
     tbt: a["total-blocking-time"].numericValue, lcp: a["largest-contentful-paint"].numericValue, cls: a["cumulative-layout-shift"].numericValue,
   });
 }
-console.log(`::notice title=Lighthouse reports::${byUrl.size} pages found in ${DIR}`);
 let md = "| page | runs | perf | a11y | best practices | SEO | TBT ms | LCP s | CLS |\n|---|---|---|---|---|---|---|---|---|\n";
 for (const [path, rs] of byUrl) {
   const m = (k) => med(rs.map((r) => r[k]));
@@ -28,6 +27,6 @@ for (const [path, rs] of byUrl) {
   md += `| ${row} |\n`;
   console.log(`::notice title=Lighthouse mobile median::${row}`);
   const mid = [...rs].sort((x, y) => x.lcp - y.lcp)[Math.floor(rs.length / 2)];
-  console.log(`::notice title=LCP detail ${path}::${mid.diag}`);
+  if (path === "/" || path === "/real-estate-vr") console.log(`::notice title=LCP detail ${path}::${mid.diag}`);
 }
 if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `### Lighthouse mobile (median)\n\n${md}`);

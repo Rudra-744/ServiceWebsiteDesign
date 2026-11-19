@@ -71,6 +71,18 @@ jobs:
       # collect, print the scores, then assert (autorun would stop at a failed assertion, and the scores are what we need to read)
       - run: npx -y @lhci/cli@0.16.1 collect
       - run: node scripts/lhci-summary.mjs
+      # temporary diagnostic: which requests and tasks decide the simulated LCP on the two image-LCP pages
+      - name: LCP nodes
+        continue-on-error: true
+        run: |
+          npm i --no-save --no-audit --no-fund lighthouse@12
+          npx next start -p 3100 &
+          sleep 6
+          for p in real-estate-vr vr-headset-rental ""; do
+            npx lighthouse "http://localhost:3100/$p" --quiet --chrome-flags="--headless=new --no-sandbox" -G ".lh-gather" --only-categories=performance
+            node scripts/lcp-nodes.mjs .lh-gather "${p:-home}"
+          done
+          kill %1 || true
       # keep LHCI's verdict readable from the run page: failed lines become annotations
       - run: |
           set +e
