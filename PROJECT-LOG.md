@@ -506,7 +506,7 @@ Performance swings by about 40 points between identical runs on this machine. TB
 
 - **#1 footer flash on back navigation:** re-checked with frame captures during the back morph. The footer stays dark under the morph; there is no white area. **Closed.**
 - **New, fixed:** back navigation landed mid-page (Rental restored about 3,000 px too high). Lenis still held the previous page's height as its scroll limit, so `scrollToY` now calls `lenis.resize()` first. The restored position is now within 181 px of the saved one.
-- **#2 Home performance:** still open (see above).
+- **#2 Home performance:** blocking time fixed (see "Home blocking time pass"); simulated LCP accepted, see "LCP and CLS pass on CI".
 
 ### Home blocking time pass — 2026-11-19 (client request)
 
@@ -546,3 +546,30 @@ Across the long tasks, layout + style came to 3.8–5.0 s, more than script. The
 **Re-checks after the change** (production build): every Home section's reveals and animations at 1440×900 and 390×844, by jumping straight to each section and by scrolling. "Why Cyphon" revealed 4/4 on desktop and 5/5 on phone. The only non-passing lines are the known ones (Services heading on desktop when jumped to; no bar on the phone Services layout; "Get started" uses `data-manual`). Playwright: 29 passed, 5 skipped.
 
 **Lighthouse CI** now writes reports to `.lighthouseci` and uploads them as a build artifact instead of using Google's temporary public storage, so reports of an unreleased site are not published to a third party.
+
+### LCP and CLS pass on CI — 2026-11-19 (client request; LCP work stopped here by client decision)
+
+**Intermittent CLS (fixed).** Lighthouse CI sometimes failed the CLS assertion: one run in three scored 0.56–0.75 on VR HUB, Contact, 360° video and Real estate VR. Cause: while a slow device is still parsing the HTML, the fixed footer is painted with only its padding (72 px) and then grows to its full height (782 px on phones), which counts as a layout shift. It reproduced in 6 of 15 loads locally at 8x CPU throttle. Fix: the footer stays `visibility: hidden` until `FooterCurtain`'s first measure adds `rdy`; it is behind `<main>` until the end of the page, so nothing visible changes. After: 0 of 20 locally, worst-run CLS on CI 0.003 or less (one VR HUB run at 0.085, under the 0.1 limit; watch it).
+
+**Manifesto image pills.** The two pills in the "What we do" sentence (Home, VR events, 360° video) downloaded the full photos (52 and 55 KB) before the first paint: they were already `loading="lazy"`, but sit inside Chrome's lazy-load distance. They now go through `next/image` with `sizes` matching their 78–192 px width (2–3 KB each).
+
+**Lighthouse CI, mobile median of 3 runs (run on `d886dd6`):**
+
+| page | perf | a11y | best practices | SEO | TBT | LCP | CLS |
+|---|---|---|---|---|---|---|---|
+| Home | 92 | 97 | 100 | 100 | 79 ms | 3.3 s | 0.003 |
+| Rental | 100 | 96 | 100 | 100 | 43 ms | 1.2 s | 0.001 |
+| VR events | 100 | 96 | 100 | 100 | 77 ms | 1.2 s | 0 |
+| 360° video | 99 | 96 | 100 | 100 | 95 ms | 1.2 s | 0.001 |
+| Real estate VR | 95 | 96 | 100 | 100 | 119 ms | 2.7 s | 0.001 |
+| VR HUB | 98 | 96 | 100 | 100 | 74 ms | 1.2 s | 0 |
+| Contact | 100 | 100 | 100 | 100 | 69 ms | 1.2 s | 0 |
+
+**Open notes:**
+1. **Simulated LCP on `/` (3.3 s) and `/real-estate-vr` (2.7 s) is above 2.5 s, while observed LCP on the CI runner is about 170 ms on both.** Lighthouse's simulation (slow 4G, 4x CPU) counts every request and script task that finished before the observed LCP. On these two pages that includes the framework chunks (React DOM, the App Router runtime) and the Home section code, which every page needs to hydrate. The LCP images themselves are 10 KB, discoverable in the HTML, `fetchpriority="high"` and not lazy. Accepted by the client for now.
+2. **Next step to go lower: lazy-hydrated islands for the Home sections**, so their code loads after first paint. It needs a Suspense boundary per section and a reveal re-arm for nodes React recreates (the earlier attempt left "Why Cyphon" unrevealed).
+3. **After launch, check real-user LCP in Vercel Speed Insights.** The simulated figures above are a lab estimate; field data decides whether item 2 is worth doing.
+
+CI stays green on performance: LCP has no assertion of its own, and the performance category is a warning (Home 85, inner pages 90). Accessibility, best practices, SEO and CLS remain errors.
+
+The LCP diagnostics added during this pass were removed again; `scripts/lhci-summary.mjs` stays and prints the median table above on every run.
