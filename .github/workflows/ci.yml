@@ -71,7 +71,13 @@ jobs:
       # collect, print the scores, then assert (autorun would stop at a failed assertion, and the scores are what we need to read)
       - run: npx -y @lhci/cli@0.16.1 collect
       - run: node scripts/lhci-summary.mjs
-      - run: npx -y @lhci/cli@0.16.1 assert
+      # keep LHCI's verdict readable from the run page: failed lines become annotations
+      - run: |
+          set +e
+          npx -y @lhci/cli@0.16.1 assert 2>&1 | tee assert.txt
+          code=${PIPESTATUS[0]}
+          grep -E "✘|✖|failed|error|warning" assert.txt | head -30 | while read -r l; do echo "::notice title=lhci assert::$l"; done
+          exit $code
       - uses: actions/upload-artifact@v4
         if: always()
         with:
