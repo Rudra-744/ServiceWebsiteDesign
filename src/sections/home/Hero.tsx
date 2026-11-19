@@ -413,7 +413,7 @@ export function Hero() {
           data-morph-to=""
         >
           <Image
-            className={`q3 block h-auto w-full select-none ${DISSOLVE} group-[.idle]/visor:animate-[q3Float_6s_ease-in-out_infinite] group-[.gl]/visor:animate-none! group-[.gl]/visor:opacity-0 group-[.gl]/visor:[transition:opacity_.7s_var(--e-out)] rm:animate-none!`}
+            className={`q3 block h-auto w-full select-none ${DISSOLVE} group-[.idle]/visor:animate-[q3Float_6s_ease-in-out_infinite] group-[.gl]/visor:animate-none! group-[.gl]/visor:opacity-0 group-[.gl]/visor:[transition:opacity_.4s_var(--e-out)_.7s] rm:animate-none!`}
             src="/images/quest3.png"
             alt="Meta Quest 3 headset"
             width={537}

@@ -11,7 +11,8 @@ import { useTicker } from "@/hooks/useTicker";
 // Hero WebGL layers (ANIMATION-SPEC H1), both loaded with import():
 // - 3D Quest (gl/quest.ts): fetched on the visitor's first interaction (pointer, touch, wheel, key or scroll) after the
 //   intro, when the browser is idle (WebGL2 only). Until then the photo shows. Idles, spins on drag,
-//   eases back to the fixed pose, and hands its silhouette to the particles. The photo stays until the model renders.
+//   eases back to the fixed pose, and hands its silhouette to the particles. The photo stays until the model has drawn its
+//   first frame and faded in over it (.7s); only then does the photo fade out underneath.
 // - Particles (gl/particles.ts): loaded on the first scroll inside the hero (they only show once the lens opens at p ≈ .14).
 // Both draw only while the hero is on screen, no loader/morph covers it and the menu is closed; DPR is capped at 2.
 const POSE = { yaw: (-26 * Math.PI) / 180, pitch: (7 * Math.PI) / 180 };
@@ -37,6 +38,8 @@ export function useHeroGL(sec: RefObject<HTMLElement | null>, pin: RefObject<HTM
     ptl: null as Particles | null,
     ptlLoading: false,
     q3: null as Quest | null,
+    q3Shown: false,
+    visor: null as HTMLElement | null,
     glCand: null as Cand | null,
     q: QI,
     vx: 0,
@@ -60,6 +63,7 @@ export function useHeroGL(sec: RefObject<HTMLElement | null>, pin: RefObject<HTM
     const g = G.current, root = pin.current!, visor = root.querySelector<HTMLElement>(".visor")!;
     const qcv = root.querySelector<HTMLCanvasElement>(".q3-cv")!, fcv = root.querySelector<HTMLCanvasElement>(".fov-cv")!;
     g.alive = true;
+    g.visor = visor;
     g.t0 = performance.now();
     const q3Rect = () => {
       const c = qcv.getBoundingClientRect(), p = root.getBoundingClientRect();
@@ -139,7 +143,7 @@ export function useHeroGL(sec: RefObject<HTMLElement | null>, pin: RefObject<HTM
             g.q3 = createQuest(qcv, model, { fov: (22 * Math.PI) / 180, dist: 0.9 });
             if (!g.q3) return;
             q3Size();
-            visor.classList.add("gl");
+            // `.gl` (photo → model) is added by the ticker once the canvas holds its first frame
           })
           .catch((err) => console.warn("Quest 3 model unavailable, using the photo", err)),
       ) as unknown as number;
@@ -213,7 +217,7 @@ export function useHeroGL(sec: RefObject<HTMLElement | null>, pin: RefObject<HTM
       removeEventListener("pointercancel", end);
       g.ptl?.dispose();
       g.q3?.dispose();
-      Object.assign(g, { ptl: null, q3: null, ptlLoading: false, glCand: null });
+      Object.assign(g, { ptl: null, q3: null, q3Shown: false, visor: null, ptlLoading: false, glCand: null });
     };
   }, [pin]);
 
@@ -246,5 +250,9 @@ export function useHeroGL(sec: RefObject<HTMLElement | null>, pin: RefObject<HTM
     const rm = engine.RM, iy = rm ? 0 : Math.sin(t * 0.42) * 0.22, ip = rm ? 0 : Math.sin(t * 0.66) * 0.045;
     const pose: Pose = { q: qLerp(QI, g.q, w), yaw: POSE.yaw + (iy + g.mx * 0.4) * w, pitch: POSE.pitch + (ip + g.my * 0.2) * w, y: (rm ? 0 : Math.sin(t * 0.9) * 0.005) * w };
     R.draw(pose, R.gl.canvas.width, R.gl.canvas.height);
+    if (!g.q3Shown) {
+      g.q3Shown = true;
+      g.visor?.classList.add("gl");
+    }
   });
 }
